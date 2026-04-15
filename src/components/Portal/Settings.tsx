@@ -31,45 +31,21 @@ const Settings = () => {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-10">
-        {/* Profile Settings */}
         <div className="lg:col-span-2 space-y-10">
           <Card className="glass border-glass-border shadow-xl rounded-[2.5rem] overflow-hidden">
             <CardHeader className="p-10 pb-0">
               <div className="flex items-center space-x-4">
                 <div className="bg-accent-emerald/10 p-3 rounded-2xl text-accent-emerald">
-                  <User className="w-5 h-5" />
+                  <FileText className="w-5 h-5" />
                 </div>
-                <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Profil Administrateur</CardTitle>
+                <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Informations Entreprise</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="p-10 space-y-8">
-              <div className="flex flex-col sm:flex-row items-center space-y-6 sm:space-y-0 sm:space-x-8 pb-8 border-b border-white/5">
-                <div className="relative group">
-                  <div className="w-24 h-24 rounded-3xl bg-accent-emerald/10 border-2 border-accent-emerald/20 overflow-hidden flex items-center justify-center">
-                    <UserCircle className="w-16 h-16 text-accent-emerald/40 group-hover:text-accent-emerald transition-colors duration-500" />
-                  </div>
-                  <button className="absolute -bottom-2 -right-2 bg-accent-emerald text-black p-2 rounded-xl shadow-lg hover:scale-110 transition-transform">
-                    <Save className="w-4 h-4" />
-                  </button>
-                </div>
-                <div className="text-center sm:text-left">
-                  <h3 className="text-lg font-bold text-text-main">Patrick NGOYI</h3>
-                  <p className="text-xs text-text-dim uppercase tracking-widest font-bold mt-1">Directeur Technique • BUDIA TECH</p>
-                </div>
-              </div>
-
               <div className="grid sm:grid-cols-2 gap-8">
                 <div className="space-y-3">
-                  <Label className="text-[9px] font-bold text-accent-emerald uppercase tracking-widest ml-1">Nom Complet</Label>
-                  <Input defaultValue="Patrick NGOYI" className="bg-secondary/50 border-border text-text-main rounded-xl h-12" />
-                </div>
-                <div className="space-y-3">
-                  <Label className="text-[9px] font-bold text-accent-emerald uppercase tracking-widest ml-1">Email Professionnel</Label>
-                  <Input defaultValue="ngoyikalembue.77.com@gmail.com" className="bg-secondary/50 border-border text-text-main rounded-xl h-12" />
-                </div>
-                <div className="space-y-3">
-                  <Label className="text-[9px] font-bold text-accent-emerald uppercase tracking-widest ml-1">Téléphone</Label>
-                  <Input defaultValue="+243 891 229 546" className="bg-secondary/50 border-border text-text-main rounded-xl h-12" />
+                  <Label className="text-[9px] font-bold text-accent-emerald uppercase tracking-widest ml-1">Nom de l'entreprise</Label>
+                  <Input defaultValue="BUDIA TECH" className="bg-secondary/50 border-border text-text-main rounded-xl h-12" />
                 </div>
                 <div className="space-y-3">
                   <Label className="text-[9px] font-bold text-accent-emerald uppercase tracking-widest ml-1">RCCM</Label>
@@ -85,33 +61,6 @@ const Settings = () => {
                 <Button onClick={handleSave} className="btn-glass h-14 px-10 rounded-xl uppercase font-bold tracking-widest text-[10px]">
                   Enregistrer les modifications
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="glass border-glass-border shadow-xl rounded-[2.5rem] overflow-hidden">
-            <CardHeader className="p-10 pb-0">
-              <div className="flex items-center space-x-4">
-                <div className="bg-accent-emerald/10 p-3 rounded-2xl text-accent-emerald">
-                  <Shield className="w-5 h-5" />
-                </div>
-                <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Sécurité & Accès</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="p-10 space-y-8">
-              <div className="flex items-center justify-between p-6 bg-secondary/50 rounded-2xl border border-border">
-                <div>
-                   <p className="text-sm font-bold text-text-main">Authentification à deux facteurs</p>
-                  <p className="text-xs text-text-dim mt-1 font-medium">Ajoutez une couche de sécurité supplémentaire à votre compte.</p>
-                </div>
-                <Switch />
-              </div>
-              <div className="flex items-center justify-between p-6 bg-secondary/50 rounded-2xl border border-border">
-                <div>
-                  <p className="text-sm font-bold text-text-main">Alertes de connexion</p>
-                  <p className="text-xs text-text-dim mt-1 font-medium">Recevez un email à chaque nouvelle connexion suspecte.</p>
-                </div>
-                <Switch defaultChecked />
               </div>
             </CardContent>
           </Card>

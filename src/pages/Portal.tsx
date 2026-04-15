@@ -21,11 +21,6 @@ import SettingsView from '@/components/Portal/Settings';
 
 const Portal = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    navigate('/');
-  };
 
   const menuItems = [
     { name: 'Tableau de bord', icon: <LayoutDashboard className="w-5 h-5" />, path: '/portal' },
@@ -61,24 +56,6 @@ const Portal = () => {
             <Bell className="w-5 h-5 group-hover:rotate-12 transition-transform" />
             <span className="absolute top-0 right-0 w-2 h-2 bg-accent-emerald rounded-full border-2 border-bg-deep"></span>
           </button>
-          <div className="flex items-center space-x-4 pl-6 border-l border-glass-border">
-            <div className="text-right hidden sm:block">
-              <p className="text-xs font-bold text-text-main">Patrick NGOYI</p>
-              <p className="text-[8px] text-accent-emerald uppercase tracking-widest font-bold mt-0.5">Directeur Technique</p>
-            </div>
-            <Avatar className="h-10 w-10 border-2 border-accent-emerald/20 hover:border-accent-emerald transition-colors duration-500 cursor-pointer">
-              <AvatarFallback className="bg-accent-emerald text-black font-bold">
-                <UserCircle className="w-6 h-6" />
-              </AvatarFallback>
-            </Avatar>
-            <button
-              onClick={handleLogout}
-              className="p-2 rounded-xl hover:bg-red-500/10 text-text-dim hover:text-red-500 transition-all duration-300"
-              title="Déconnexion"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
         </div>
       </header>
 
