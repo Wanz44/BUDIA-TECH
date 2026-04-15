@@ -1,19 +1,16 @@
 import { useState } from 'react';
-import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Package, 
   ShoppingCart, 
   Settings, 
-  LogOut, 
   Bell, 
   Search,
-  Cpu,
-  UserCircle
+  Cpu
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/Input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Dashboard from '@/components/Portal/Dashboard';
 import Inventory from '@/components/Portal/Inventory';
 import Orders from '@/components/Portal/Orders';

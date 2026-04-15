@@ -1,14 +1,8 @@
 import { motion } from 'motion/react';
 import { 
-  User, 
   Bell, 
-  Shield, 
   Globe, 
-  Mail, 
-  Phone, 
-  MapPin,
   Save,
-  UserCircle,
   FileText
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
