@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+    --font-heading: 'Playfair Display', serif;
+    --font-sans: 'Montserrat', sans-serif;
+    
+    --color-bg-deep: var(--bg-color);
+    --color-glass-bg: var(--glass-bg);
+    --color-glass-border: var(--glass-border);
+    --color-accent-emerald: #50C878;
+    --color-accent-blue: var(--accent-blue);
+    --color-text-main: var(--text-main);
+    --color-text-dim: var(--text-dim);
+    --color-border: var(--glass-border);
+    --color-ring: var(--accent-blue);
+}
+
+:root {
+    --bg-color: #FAFAFA;
+    --text-main: #1A1A1A;
+    --text-dim: #6B7280;
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: #E5E7EB;
+    --accent-blue: #191970; /* Midnight Blue */
+    
+    --background: #FAFAFA;
+    --foreground: #1A1A1A;
+    --card: #FFFFFF;
+    --card-foreground: #1A1A1A;
+    --popover: #FFFFFF;
+    --popover-foreground: #1A1A1A;
+    --primary: #50C878;
+    --primary-foreground: #FFFFFF;
+    --secondary: #F3F4F6;
+    --secondary-foreground: #1A1A1A;
+    --muted: #F3F4F6;
+    --muted-foreground: #6B7280;
+    --accent: #F3F4F6;
+    --accent-foreground: #50C878;
+    --destructive: #EF4444;
+    --border: #E5E7EB;
+    --input: #E5E7EB;
+    --ring: #50C878;
+    --radius: 1rem;
+}
+
+.dark {
+    --bg-color: #0A0A0A;
+    --text-main: #F9FAFB;
+    --text-dim: #9CA3AF;
+    --glass-bg: rgba(17, 17, 17, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --accent-blue: #50C878;
+    
+    --background: #0A0A0A;
+    --foreground: #F9FAFB;
+    --card: #111111;
+    --card-foreground: #F9FAFB;
+    --popover: #0A0A0A;
+    --popover-foreground: #F9FAFB;
+    --primary: #50C878;
+    --primary-foreground: #000000;
+    --secondary: #1F2937;
+    --secondary-foreground: #F9FAFB;
+    --muted: #1F2937;
+    --muted-foreground: #9CA3AF;
+    --accent: #1F2937;
+    --accent-foreground: #50C878;
+    --destructive: #7F1D1D;
+    --border: #1F2937;
+    --input: #1F2937;
+    --ring: #50C878;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50 transition-colors duration-300;
+  }
+  body {
+    @apply bg-bg-deep text-text-main min-h-screen leading-relaxed;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(80, 200, 120, 0.03) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(25, 25, 112, 0.03) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-glass-bg border border-glass-border backdrop-blur-xl;
+  }
+  .glass-card {
+    @apply bg-glass-bg border border-glass-border backdrop-blur-xl rounded-2xl shadow-xl;
+  }
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-emerald to-accent-blue;
+  }
+  .btn-glass {
+    @apply bg-gradient-to-br from-accent-blue to-accent-emerald text-white shadow-lg shadow-accent-blue/20 hover:shadow-accent-blue/40 transition-all duration-300;
+  }
+  .font-serif {
+    font-family: 'Playfair Display', serif;
+  }
+}
