@@ -3,86 +3,64 @@ import { Cpu, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from
 
 const Footer = () => {
   return (
-    <footer className="glass border-t border-glass-border pt-20 pb-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-16">
-          {/* Brand */}
-          <div className="space-y-8">
-            <Link to="/" className="flex items-center space-x-3">
-              <div className="bg-accent-blue p-2 rounded-lg">
-                <Cpu className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xl font-extrabold tracking-widest text-accent-blue uppercase font-sans">
-                BUDIA <span className="text-accent-emerald font-light">TECH</span>
-              </span>
-            </Link>
-            <p className="text-text-dim text-xs leading-relaxed font-medium">
-              L'excellence technologique et le prestige numérique au service de votre vision. Nous forgeons l'avenir de l'infrastructure africaine.
+    <footer className="bg-bg-deep text-text-main pt-32 pb-16 transition-colors duration-700">
+      <div className="container mx-auto px-6">
+        <div className="flex flex-col lg:flex-row justify-between items-start mb-32 gap-20">
+          <div className="max-w-md">
+            <span className="text-4xl font-black tracking-tighter uppercase mb-6 block">
+              BUDIA <span className="text-accent-blue hover:text-accent-emerald transition-colors cursor-default">TECH</span>
+            </span>
+            <p className="text-text-dim text-[11px] leading-loose uppercase tracking-widest font-bold mb-10">
+              L'excellence technologique et le prestige numérique au service de votre vision. Nous forgeons l'avenir de l'infrastructure africaine par le biais de l'ingénierie d'élite.
             </p>
-            <div className="flex space-x-5">
+            <div className="flex space-x-6">
               {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
-                <a key={i} href="#" className="bg-accent-emerald/5 p-2.5 rounded-xl border border-accent-emerald/10 text-text-dim hover:text-accent-emerald hover:border-accent-emerald transition-all duration-300">
+                <a key={i} href="#" className="text-text-dim hover:text-accent-blue transition-all hover:scale-110">
                   <Icon className="w-5 h-5" />
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-text-main font-serif font-bold uppercase tracking-widest text-[10px] mb-8">Navigation</h3>
-            <ul className="space-y-5 text-[10px] font-bold uppercase tracking-widest">
-              <li><a href="#home" className="text-text-dim hover:text-accent-emerald transition-colors">Accueil</a></li>
-              <li><a href="#about" className="text-text-dim hover:text-accent-emerald transition-colors">À Propos</a></li>
-              <li><a href="#services" className="text-text-dim hover:text-accent-emerald transition-colors">Services</a></li>
-              <li><a href="#products" className="text-text-dim hover:text-accent-emerald transition-colors">Galerie</a></li>
-              <li><a href="#contact" className="text-text-dim hover:text-accent-emerald transition-colors">Contact</a></li>
-            </ul>
-          </div>
-
-          {/* Products & Services */}
-          <div>
-            <h3 className="text-text-main font-serif font-bold uppercase tracking-widest text-[10px] mb-8">Expertises</h3>
-            <ul className="space-y-5 text-[10px] font-bold uppercase tracking-widest">
-              <li><span className="text-text-dim hover:text-accent-emerald transition-colors cursor-pointer">Matériel Élite</span></li>
-              <li><span className="text-text-dim hover:text-accent-emerald transition-colors cursor-pointer">Sécurité Intelligente</span></li>
-              <li><span className="text-text-dim hover:text-accent-emerald transition-colors cursor-pointer">Ingénierie Software</span></li>
-              <li><span className="text-text-dim hover:text-accent-emerald transition-colors cursor-pointer">Arts Numériques</span></li>
-              <li><span className="text-text-dim hover:text-accent-emerald transition-colors cursor-pointer">Conseil Stratégique</span></li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <h3 className="text-text-main font-serif font-bold uppercase tracking-widest text-[10px] mb-8">Contact</h3>
-            <ul className="space-y-5 text-[10px] font-bold uppercase tracking-widest">
-              <li className="flex items-start space-x-4 text-text-dim">
-                <MapPin className="w-5 h-5 text-accent-emerald shrink-0" />
-                <span className="leading-relaxed">Avenue Lunvungi, Commune de Kinshasa, Réf : Rond-point Huilerie</span>
-              </li>
-              <li className="flex items-center space-x-4 text-text-dim">
-                <Phone className="w-5 h-5 text-accent-emerald shrink-0" />
-                <span>+243 891 229 546</span>
-              </li>
-              <li className="flex items-center space-x-4 text-text-dim">
-                <Mail className="w-5 h-5 text-accent-emerald shrink-0" />
-                <span>ngoyikalembue.77.com@gmail.com</span>
-              </li>
-            </ul>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-20 gap-y-12">
+            <div>
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-text-main underline underline-offset-8 mb-8 decoration-accent-blue">Navigation</h3>
+              <ul className="space-y-4 text-[9px] font-bold uppercase tracking-widest text-text-dim">
+                <li><a href="#home" className="hover:text-accent-blue transition-colors">Accueil</a></li>
+                <li><a href="#about" className="hover:text-accent-blue transition-colors">L'Héritage</a></li>
+                <li><a href="#services" className="hover:text-accent-blue transition-colors">Expertises</a></li>
+                <li><a href="#products" className="hover:text-accent-blue transition-colors">Galerie</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-text-main underline underline-offset-8 mb-8 decoration-accent-emerald">Société</h3>
+              <ul className="space-y-4 text-[9px] font-bold uppercase tracking-widest text-text-dim">
+                <li><span className="cursor-pointer hover:text-accent-emerald transition-colors">Carrières E-lite</span></li>
+                <li><span className="cursor-pointer hover:text-accent-emerald transition-colors">Presse</span></li>
+                <li><span className="cursor-pointer hover:text-accent-emerald transition-colors">Partenaires</span></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-text-main underline underline-offset-8 mb-8 decoration-text-dim">Siège</h3>
+              <ul className="space-y-4 text-[9px] font-bold uppercase tracking-widest text-text-dim">
+                <li className="leading-relaxed text-xs text-text-main">Kinshasa, RDC<br/>Huilerie, Lunvungi</li>
+                <li className="text-[9px]">ngoyikalembue.77@gmail.com</li>
+                <li className="text-[9px]">+243 891 229 546</li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        <div className="border-t border-glass-border pt-10 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
-          <p className="text-[9px] font-bold text-text-dim uppercase tracking-widest">
-            © {new Date().getFullYear()} BUDIA TECH. Excellence & Innovation.
+        <div className="flex flex-col md:flex-row justify-between items-center pt-10 border-t border-text-main/5 space-y-6 md:space-y-0">
+          <p className="text-[9px] font-bold text-text-dim/40 uppercase tracking-[0.5em]">
+            © {new Date().getFullYear()} BUDIA TECH • TOUS DROITS RÉSERVÉS
           </p>
-          <div className="flex items-center space-x-8">
-            <div className="flex items-center space-x-3">
-              <div className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.6)]" />
-              <span className="text-[9px] font-bold text-text-dim uppercase tracking-widest">Systèmes Opérationnels</span>
-            </div>
-            <a href="#" className="text-text-dim hover:text-text-main text-[9px] font-bold uppercase tracking-widest transition-colors">Mentions Légales</a>
-            <a href="#" className="text-text-dim hover:text-text-main text-[9px] font-bold uppercase tracking-widest transition-colors">Confidentialité</a>
+          <div className="flex items-center space-x-12">
+              <span className="text-[9px] font-bold text-text-dim/40 uppercase tracking-widest">DESIGNED FOR EXCELLENCE</span>
+              <div className="flex items-center space-x-2">
+                 <div className="w-1.5 h-1.5 bg-accent-red rounded-full animate-pulse shadow-[0_0_8px_#EF4444]" />
+                 <span className="text-[8px] font-bold uppercase text-accent-red tracking-widest">Core Status: Secure</span>
+              </div>
           </div>
         </div>
       </div>

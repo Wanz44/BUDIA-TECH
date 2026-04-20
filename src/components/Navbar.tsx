@@ -31,62 +31,60 @@ const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'glass border-b border-glass-border py-3' : 'bg-transparent py-5'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled 
+          ? 'bg-bg-deep/80 backdrop-blur-2xl border-b border-text-main/5 py-3 shadow-lg' 
+          : 'bg-transparent py-8'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-6">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="bg-accent-blue p-2 rounded-lg">
-              <Cpu className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-xl font-extrabold tracking-widest text-accent-blue uppercase font-sans">
-              BUDIA <span className="text-accent-emerald font-light">TECH</span>
+          <Link to="/" className="group">
+            <span className="text-2xl font-black tracking-tighter uppercase transition-colors duration-500 text-text-main">
+              BUDIA <span className="text-accent-blue group-hover:text-accent-emerald transition-colors">TECH</span>
             </span>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-12">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="text-[10px] font-bold uppercase tracking-widest text-text-dim hover:text-accent-blue transition-colors"
+                className="text-[10px] font-bold uppercase tracking-[0.3em] transition-all duration-500 text-text-dim hover:text-accent-blue"
               >
                 {link.name}
               </a>
             ))}
             
-            <div className="flex items-center space-x-4 pl-4 border-l border-glass-border">
+            <div className="flex items-center space-x-6 pl-12 border-l border-text-main/10 transition-colors duration-500">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-white/10 text-text-dim hover:text-accent-blue transition-all"
+                className="p-2 transition-colors text-text-dim hover:text-text-main"
                 aria-label="Toggle theme"
               >
                 {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
               </button>
               
               <Link to="/portal">
-                <Button className="btn-glass rounded-full px-6 font-bold uppercase text-[10px] tracking-widest h-10">
-                  <Settings className="w-3 h-3 mr-2" />
-                  Portail
+                <Button className="rounded-full px-8 h-12 text-[10px] font-bold uppercase tracking-widest transition-all duration-500 bg-text-main text-bg-deep hover:bg-accent-blue hover:text-white hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                  Espace Pro
                 </Button>
               </Link>
             </div>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center space-x-4">
+          <div className="lg:hidden flex items-center space-x-6">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-white/10 text-text-dim"
+              className="p-2 transition-colors text-text-dim hover:text-text-main"
             >
               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
             </button>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-text-dim hover:text-accent-blue focus:outline-none"
+              className="transition-colors text-text-main"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -98,30 +96,57 @@ const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden glass border-b border-glass-border overflow-hidden"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed inset-0 top-0 left-0 w-full h-screen bg-bg-deep/95 backdrop-blur-2xl z-50 flex flex-col p-8 lg:hidden"
           >
-            <div className="px-4 pt-2 pb-6 space-y-1">
-              {navLinks.map((link) => (
-                <a
+            <div className="flex justify-between items-center mb-16">
+              <span className="text-2xl font-black tracking-tighter uppercase text-text-main">
+                BUDIA <span className="text-accent-blue">TECH</span>
+              </span>
+              <button 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-text-main bg-text-main/5 p-4 rounded-full hover:bg-accent-blue hover:text-white transition-all transform hover:rotate-90 duration-500"
+              >
+                <X className="w-8 h-8" />
+              </button>
+            </div>
+            
+            <div className="flex flex-col space-y-4">
+              {navLinks.map((link, i) => (
+                <motion.a
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + i * 0.05, type: 'spring', damping: 20 }}
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-accent-blue hover:bg-secondary/50 rounded-md"
+                  className="group flex items-center justify-between py-4 border-b border-text-main/5"
                 >
-                  {link.name}
-                </a>
+                  <span className="text-4xl font-black uppercase tracking-tighter text-text-main group-hover:text-accent-blue transition-colors">
+                    {link.name}
+                  </span>
+                  <div className="w-4 h-4 rounded-full border-2 border-accent-blue opacity-0 group-hover:opacity-100 transition-all transform scale-0 group-hover:scale-100" />
+                </motion.a>
               ))}
-              <div className="pt-4">
-                <Link to="/portal" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="w-full btn-glass rounded-xl h-12 font-bold uppercase text-xs tracking-widest">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Portail
+            </div>
+            
+            <div className="mt-auto pt-10 border-t border-text-main/10">
+               <div className="flex items-center justify-between mb-8 px-4 text-text-dim">
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em]">Écosystème Digital</span>
+                  <div className="flex gap-4">
+                    <button onClick={toggleTheme} className="p-3 bg-text-main/5 rounded-2xl">
+                      {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+                    </button>
+                  </div>
+               </div>
+               <Link to="/portal" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full bg-accent-blue text-white hover:bg-accent-emerald hover:text-black h-20 rounded-full text-sm font-bold uppercase tracking-widest transition-all shadow-[0_20px_40px_rgba(59,130,246,0.2)]">
+                    Portail Client Elite
                   </Button>
-                </Link>
-              </div>
+               </Link>
             </div>
           </motion.div>
         )}

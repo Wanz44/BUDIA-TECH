@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { 
   TrendingUp, 
@@ -10,24 +11,85 @@ import {
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
+import { 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+} from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { mockDb } from '@/lib/mockDb';
+import { format, subDays, isSameDay, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const Dashboard = () => {
-  const stats = [
-    { name: 'Ventes Totales', value: '24.500 Fc', icon: <TrendingUp className="w-5 h-5" />, trend: '+12.5%', isUp: true },
-    { name: 'Nouveaux Clients', value: '128', icon: <Users className="w-5 h-5" />, trend: '+8.2%', isUp: true },
-    { name: 'Commandes', value: '45', icon: <ShoppingCart className="w-5 h-5" />, trend: '-2.4%', isUp: false },
-    { name: 'Stock Critique', value: '12', icon: <Package className="w-5 h-5" />, trend: 'Attention', isUp: false },
-  ];
+  const [salesData, setSalesData] = useState<any[]>([]);
+  const [stats, setStats] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
 
-  const recentOrders = [
-    { id: '#ORD-7281', customer: 'Jean Dupont', product: 'MacBook Pro M3', amount: '2.499 Fc', status: 'delivered', date: 'Il y a 2h' },
-    { id: '#ORD-7282', customer: 'Marie Curie', product: 'Caméra 4K', amount: '199 Fc', status: 'processing', date: 'Il y a 5h' },
-    { id: '#ORD-7283', customer: 'Albert Einstein', product: 'Unité Centrale', amount: '1.599 Fc', status: 'pending', date: 'Il y a 8h' },
-    { id: '#ORD-7284', customer: 'Isaac Newton', product: 'iPad Pro', amount: '1.099 Fc', status: 'cancelled', date: 'Hier' },
-  ];
+  useEffect(() => {
+    const fetchData = () => {
+      const allOrders = mockDb.getAll('orders');
+      const allCustomers = mockDb.getAll('contacts'); // Assuming contacts are customers
+      const allInventory = mockDb.getAll('inventory');
+      
+      setOrders(allOrders.slice(0, 4));
+
+      // Process sales data for the last 7 days
+      const last7Days = Array.from({ length: 7 }, (_, i) => {
+        const date = subDays(new Date(), i);
+        return {
+          date: format(date, 'dd MMM', { locale: fr }),
+          rawDate: date,
+          sales: 0
+        };
+      }).reverse();
+
+      allOrders.forEach((order: any) => {
+        const orderDate = parseISO(order.createdAt);
+        const dayMatch = last7Days.find(d => isSameDay(d.rawDate, orderDate));
+        if (dayMatch) {
+          // Parse amount like "2.499 Fc" or 2499
+          let amount = 0;
+          if (typeof order.total === 'string') {
+            amount = parseInt(order.total.replace(/[^\d]/g, '')) || 0;
+          } else {
+            amount = order.total || 0;
+          }
+          dayMatch.sales += amount;
+        }
+      });
+
+      setSalesData(last7Days);
+
+      // Update stats
+      const totalSales = allOrders.reduce((acc: number, curr: any) => {
+        let amount = 0;
+        if (typeof curr.total === 'string') {
+          amount = parseInt(curr.total.replace(/[^\d]/g, '')) || 0;
+        } else {
+          amount = curr.total || 0;
+        }
+        return acc + amount;
+      }, 0);
+
+      const criticalStock = allInventory.filter((item: any) => item.quantity <= 5).length;
+
+      setStats([
+        { name: 'Ventes Totales', value: `${totalSales.toLocaleString()} Fc`, icon: <TrendingUp className="w-5 h-5" />, trend: '+12.5%', isUp: true },
+        { name: 'Nouveaux Clients', value: allCustomers.length.toString(), icon: <Users className="w-5 h-5" />, trend: '+8.2%', isUp: true },
+        { name: 'Commandes', value: allOrders.length.toString(), icon: <ShoppingCart className="w-5 h-5" />, trend: '-2.4%', isUp: false },
+        { name: 'Stock Critique', value: criticalStock.toString(), icon: <Package className="w-5 h-5" />, trend: 'Attention', isUp: false },
+      ]);
+    };
+
+    fetchData();
+  }, []);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -35,8 +97,25 @@ const Dashboard = () => {
       case 'processing': return <Badge className="bg-accent-emerald/10 text-accent-emerald hover:bg-accent-emerald/20 border-accent-emerald/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">En cours</Badge>;
       case 'pending': return <Badge className="bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 border-yellow-500/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">Attente</Badge>;
       case 'cancelled': return <Badge className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">Annulé</Badge>;
-      default: return <Badge>{status}</Badge>;
+      default: return <Badge className="bg-accent-silver/10 text-accent-silver uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">{status}</Badge>;
     }
+  };
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="glass border-glass-border p-5 rounded-2xl shadow-2xl backdrop-blur-2xl">
+          <p className="text-[10px] font-black uppercase tracking-widest text-text-dim mb-2">{label}</p>
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-accent-emerald shadow-[0_0_8px_#10B981]" />
+            <p className="text-sm font-bold text-text-main">
+              {payload[0].value.toLocaleString()} <span className="text-[10px] text-accent-emerald font-black">FC</span>
+            </p>
+          </div>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -74,35 +153,93 @@ const Dashboard = () => {
         ))}
       </div>
 
+      {/* Sales Evolution Chart */}
+      <Card className="glass border-glass-border shadow-xl rounded-[2.5rem] overflow-hidden">
+        <CardHeader className="p-10 pb-0">
+          <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Évolution des Ventes (7 jours)</CardTitle>
+        </CardHeader>
+        <CardContent className="p-10 h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={salesData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148, 163, 184, 0.1)" />
+              <XAxis 
+                dataKey="date" 
+                axisLine={false} 
+                tickLine={false} 
+                tick={{ fontSize: 10, fill: '#64748B', fontWeight: 600 }}
+                dy={10}
+              />
+              <YAxis 
+                axisLine={false} 
+                tickLine={false} 
+                tick={{ fontSize: 10, fill: '#64748B', fontWeight: 600 }}
+                tickFormatter={(value) => `${(value / 1000).toFixed(1)}k`}
+              />
+              <Tooltip 
+                content={<CustomTooltip />}
+                cursor={{ stroke: 'rgba(16, 185, 129, 0.2)', strokeWidth: 2 }}
+              />
+              <Area 
+                type="monotone" 
+                dataKey="sales" 
+                stroke="#10B981" 
+                strokeWidth={3}
+                fillOpacity={1} 
+                fill="url(#colorSales)"
+                activeDot={{ 
+                  r: 6, 
+                  stroke: '#10B981', 
+                  strokeWidth: 2, 
+                  fill: 'white',
+                  className: "filter drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+                }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
       <div className="grid lg:grid-cols-3 gap-10">
         {/* Recent Orders */}
         <Card className="lg:col-span-2 glass border-glass-border shadow-xl rounded-[2.5rem] overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between p-10 pb-0">
-            <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Flux de Commandes</CardTitle>
+            <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Flux de Commandes Récentes</CardTitle>
             <Button variant="ghost" className="text-accent-emerald text-[9px] font-bold uppercase tracking-widest hover:bg-accent-emerald/10 h-10 px-6 rounded-xl">Tout voir</Button>
           </CardHeader>
           <CardContent className="p-10">
             <div className="space-y-8">
-              {recentOrders.map((order) => (
+              {orders.length > 0 ? orders.map((order) => (
                 <div key={order.id} className="flex items-center justify-between group cursor-pointer">
                   <div className="flex items-center space-x-5">
                     <div className="bg-secondary/50 p-4 rounded-2xl group-hover:bg-accent-emerald/10 border border-border group-hover:border-accent-emerald/20 transition-all duration-300">
                       <ShoppingCart className="w-5 h-5 text-text-dim group-hover:text-accent-emerald" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-text-main group-hover:text-accent-emerald transition-colors">{order.customer}</p>
-                      <p className="text-[9px] text-text-dim uppercase tracking-widest font-bold mt-1">{order.product} • {order.id}</p>
+                      <p className="text-sm font-bold text-text-main group-hover:text-accent-emerald transition-colors">{order.customer || order.name}</p>
+                      <p className="text-[9px] text-text-dim uppercase tracking-widest font-bold mt-1">{order.items ? `${order.items.length} articles` : 'Commande'} • {order.id}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-text-main mb-2">{order.amount}</p>
+                    <p className="text-sm font-bold text-text-main mb-2">{order.total} Fc</p>
                     <div className="flex items-center justify-end space-x-3">
-                      <span className="text-[9px] text-text-dim font-bold uppercase tracking-widest">{order.date}</span>
+                      <span className="text-[9px] text-text-dim font-bold uppercase tracking-widest">
+                        {format(parseISO(order.createdAt), 'dd/MM HH:mm')}
+                      </span>
                       {getStatusBadge(order.status)}
                     </div>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-10">
+                  <p className="text-text-dim text-xs font-bold uppercase tracking-widest">Aucune commande récente</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
