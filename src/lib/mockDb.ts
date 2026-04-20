@@ -22,7 +22,12 @@ export const mockDb = {
   
   add: (collectionName: string, doc: any) => {
     const items = mockDb.getAll(collectionName);
-    const newDoc = { ...doc, id: Math.random().toString(36).substr(2, 9), createdAt: new Date().toISOString() };
+    const newDoc = { 
+      ...doc, 
+      id: Math.random().toString(36).substr(2, 9), 
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
     items.unshift(newDoc);
     localStorage.setItem(`mock_db_${collectionName}`, JSON.stringify(items));
     return newDoc;
@@ -34,12 +39,26 @@ export const mockDb = {
     if (index !== -1) {
       items[index] = { ...items[index], ...updates, updatedAt: new Date().toISOString() };
       localStorage.setItem(`mock_db_${collectionName}`, JSON.stringify(items));
+      return items[index];
     }
+    return null;
   },
   
   delete: (collectionName: string, id: string) => {
     const items = mockDb.getAll(collectionName);
     const filtered = items.filter((item: any) => item.id !== id);
     localStorage.setItem(`mock_db_${collectionName}`, JSON.stringify(filtered));
+  },
+
+  set: (collectionName: string, data: any[]) => {
+    localStorage.setItem(`mock_db_${collectionName}`, JSON.stringify(data));
+  },
+
+  // Seed default data if empty
+  seed: (collectionName: string, initialData: any[]) => {
+    const existing = mockDb.getAll(collectionName);
+    if (existing.length === 0) {
+      localStorage.setItem(`mock_db_${collectionName}`, JSON.stringify(initialData));
+    }
   }
 };

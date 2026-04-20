@@ -1,8 +1,26 @@
 import { motion } from 'motion/react';
 import { ArrowRight, Cpu, Shield, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+import { mockDb } from '@/lib/mockDb';
 
 const Hero = () => {
+  const [config, setConfig] = useState<any>({
+    companyName: 'BUDIA TECH',
+    description: 'L\'Elite Technique',
+    heroBgUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2000'
+  });
+
+  useEffect(() => {
+    const fetchConfig = () => {
+      const saved = mockDb.getAll('siteConfig').find((c: any) => c.id === 'branding');
+      if (saved) setConfig(saved);
+    };
+    fetchConfig();
+    window.addEventListener('siteConfigUpdated', fetchConfig);
+    return () => window.removeEventListener('siteConfigUpdated', fetchConfig);
+  }, []);
+
   return (
     <section id="home" className="relative h-screen min-h-[800px] flex items-center overflow-hidden bg-bg-deep text-text-main transition-colors duration-700">
       {/* Immersive Background */}
@@ -12,7 +30,7 @@ const Hero = () => {
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.5, ease: "easeOut" }}
-          src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2000"
+          src={config.heroBgUrl || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2000"}
           alt="Advanced Hardware"
           className="w-full h-full object-cover opacity-30 dark:opacity-60 grayscale dark:grayscale-0"
           referrerPolicy="no-referrer"
@@ -33,7 +51,7 @@ const Hero = () => {
             <div className="flex items-center gap-4 mb-10 justify-center lg:justify-start">
               <div className="inline-block border border-text-main/20 px-6 py-2 rounded-full backdrop-blur-md">
                 <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent-emerald">
-                  Édition Limitée • Excellence Technologique
+                  Édition Limitée • Excellence {config.companyName}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -43,14 +61,16 @@ const Hero = () => {
             </div>
             
             <h1 className="text-[12vw] lg:text-[7vw] font-black leading-[0.85] uppercase tracking-tighter mb-8 bg-clip-text text-transparent bg-gradient-to-r from-text-main to-accent-silver">
-              L'Elite <br />
-              <span className="text-transparent font-outline-2 opacity-50 dark:opacity-20 hover:opacity-100 transition-all">Technique</span>
+              {config.companyName.split(' ')[0]} <br />
+              <span className="text-transparent font-outline-2 opacity-50 dark:opacity-20 hover:opacity-100 transition-all">
+                {config.companyName.split(' ')[1] || 'TECH'}
+              </span>
             </h1>
             
             <div className="grid lg:grid-cols-2 gap-12 items-end">
               <div>
                 <p className="text-xl text-text-dim font-medium leading-relaxed mb-10 max-w-md">
-                  BUDIA TECH redéfinit les standards de l'ingénierie numérique. Nous forgeons l'avenir de votre infrastructure.
+                  {config.description || "BUDIA TECH redéfinit les standards de l'ingénierie numérique. Nous forgeons l'avenir de votre infrastructure."}
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
                   <Button size="lg" className="bg-accent-emerald text-white dark:text-black hover:bg-accent-blue hover:text-white transition-all duration-500 px-12 h-16 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-2xl shadow-accent-emerald/20">

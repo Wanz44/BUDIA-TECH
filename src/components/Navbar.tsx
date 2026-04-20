@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Cpu, Settings, Sun, Moon } from 'lucide-react';
+import { Menu, X, Cpu, Settings, Sun, Moon, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { mockDb } from '@/lib/mockDb';
 
 interface NavbarProps {
   theme: 'light' | 'dark';
@@ -12,13 +13,27 @@ interface NavbarProps {
 const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [config, setConfig] = useState<any>({
+    companyName: 'BUDIA TECH',
+    logoUrl: ''
+  });
 
   useEffect(() => {
+    const fetchConfig = () => {
+      const saved = mockDb.getAll('siteConfig').find((c: any) => c.id === 'branding');
+      if (saved) setConfig(saved);
+    };
+    fetchConfig();
+    window.addEventListener('siteConfigUpdated', fetchConfig);
+    
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('siteConfigUpdated', fetchConfig);
+    };
   }, []);
 
   const navLinks = [
@@ -28,6 +43,10 @@ const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
     { name: 'Galerie', href: '#products' },
     { name: 'Contact', href: '#contact' },
   ];
+
+  const brandParts = config.companyName.split(' ');
+  const brandMain = brandParts[0] || 'BUDIA';
+  const brandSub = brandParts.slice(1).join(' ') || 'TECH';
 
   return (
     <nav
@@ -39,9 +58,16 @@ const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
     >
       <div className="container mx-auto px-6">
         <div className="flex justify-between items-center">
-          <Link to="/" className="group">
+          <Link to="/" className="group flex items-center gap-4">
+            {config.logoUrl ? (
+              <img src={config.logoUrl} alt="Logo" className="h-10 w-auto object-contain" referrerPolicy="no-referrer" />
+            ) : (
+              <div className="bg-accent-blue/10 p-2 rounded-lg text-accent-blue hidden sm:block">
+                <Cpu className="w-6 h-6" />
+              </div>
+            )}
             <span className="text-2xl font-black tracking-tighter uppercase transition-colors duration-500 text-text-main">
-              BUDIA <span className="text-accent-blue group-hover:text-accent-emerald transition-colors">TECH</span>
+              {brandMain} <span className="text-accent-blue group-hover:text-accent-emerald transition-colors">{brandSub}</span>
             </span>
           </Link>
 
@@ -66,9 +92,9 @@ const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
                 {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
               </button>
               
-              <Link to="/portal">
-                <Button className="rounded-full px-8 h-12 text-[10px] font-bold uppercase tracking-widest transition-all duration-500 bg-text-main text-bg-deep hover:bg-accent-blue hover:text-white hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
-                  Espace Pro
+              <Link to="/portal" title="Portail Client">
+                <Button className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 bg-text-main text-bg-deep hover:bg-accent-blue hover:text-white hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                  <Lock className="w-4 h-4" />
                 </Button>
               </Link>
             </div>
@@ -143,8 +169,8 @@ const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
                   </div>
                </div>
                <Link to="/portal" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="w-full bg-accent-blue text-white hover:bg-accent-emerald hover:text-black h-20 rounded-full text-sm font-bold uppercase tracking-widest transition-all shadow-[0_20px_40px_rgba(59,130,246,0.2)]">
-                    Portail Client Elite
+                  <Button className="w-full bg-accent-blue text-white hover:bg-accent-emerald hover:text-black h-24 rounded-[2.5rem] transition-all shadow-[0_20px_40px_rgba(59,130,246,0.2)] flex items-center justify-center group">
+                    <Lock className="w-10 h-10 group-hover:scale-110 transition-transform" />
                   </Button>
                </Link>
             </div>
