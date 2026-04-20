@@ -35,8 +35,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { db } from '@/firebase';
-import { collection, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { mockDb } from '@/lib/mockDb';
 import { Product } from '@/types';
 import { toast } from 'sonner';
 
@@ -48,16 +47,20 @@ const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const productsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Product[];
-      setProducts(productsData);
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    // Initial load
+    const data = mockDb.getAll('products');
+    if (data.length === 0) {
+      // Seed with some initial data if empty
+      const initialProducts = [
+        { id: '1', name: 'MacBook Pro M3 Max', description: 'Le summum de la puissance Apple', price: 3500000, stock: 5, category: 'Ordinateurs', imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=200', createdAt: new Date().toISOString() },
+        { id: '2', name: 'iPhone 15 Pro', description: 'Titane de qualité spatiale', price: 1200000, stock: 12, category: 'Mobiles', imageUrl: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&q=80&w=200', createdAt: new Date().toISOString() }
+      ];
+      mockDb.collection('products').set(initialProducts);
+      setProducts(initialProducts);
+    } else {
+      setProducts(data);
+    }
+    setLoading(false);
   }, []);
 
   const handleAddProduct = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,15 +69,18 @@ const Inventory = () => {
     const formData = new FormData(e.currentTarget);
     
     try {
-      await addDoc(collection(db, 'products'), {
-        name: formData.get('name'),
-        description: formData.get('description'),
+      const newProduct = {
+        name: formData.get('name') as string,
+        description: formData.get('description') as string,
         price: Number(formData.get('price')),
         stock: Number(formData.get('stock')),
-        category: formData.get('category'),
-        imageUrl: formData.get('imageUrl') || 'https://images.unsplash.com/photo-1588702547319-f0009307f154?auto=format&fit=crop&q=80&w=200',
-        createdAt: serverTimestamp(),
-      });
+        category: formData.get('category') as string,
+        imageUrl: (formData.get('imageUrl') as string) || 'https://images.unsplash.com/photo-1588702547319-f0009307f154?auto=format&fit=crop&q=80&w=200',
+      };
+      
+      const addedProduct = mockDb.add('products', newProduct);
+      setProducts(prev => [addedProduct, ...prev]);
+      
       toast.success('Produit ajouté avec succès');
       setIsAddDialogOpen(false);
     } catch (error) {
@@ -88,7 +94,8 @@ const Inventory = () => {
   const handleDeleteProduct = async (id: string) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
       try {
-        await deleteDoc(doc(db, 'products', id));
+        mockDb.delete('products', id);
+        setProducts(prev => prev.filter(p => p.id !== id));
         toast.success('Produit supprimé');
       } catch (error) {
         toast.error('Erreur lors de la suppression');
@@ -110,12 +117,14 @@ const Inventory = () => {
         </div>
 
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="btn-glass text-[10px] font-bold uppercase tracking-widest rounded-xl h-14 px-8">
-              <Plus className="w-4 h-4 mr-3" />
-              Nouveau Produit
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button className="btn-glass text-[10px] font-bold uppercase tracking-widest rounded-xl h-14 px-8">
+                <Plus className="w-4 h-4 mr-3" />
+                Nouveau Produit
+              </Button>
+            }
+          />
           <DialogContent className="sm:max-w-[550px] glass border-glass-border rounded-[3rem] text-text-main p-10">
             <DialogHeader>
               <DialogTitle className="text-2xl font-serif font-bold tracking-tight text-text-main">Ajouter à la Collection</DialogTitle>
@@ -239,11 +248,13 @@ const Inventory = () => {
                   </TableCell>
                   <TableCell className="text-right pr-10">
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="rounded-xl hover:bg-secondary/50 text-text-dim h-10 w-10">
-                          <MoreVertical className="w-5 h-5" />
-                        </Button>
-                      </DropdownMenuTrigger>
+                      <DropdownMenuTrigger
+                        render={
+                          <Button variant="ghost" size="icon" className="rounded-xl hover:bg-secondary/50 text-text-dim h-10 w-10">
+                            <MoreVertical className="w-5 h-5" />
+                          </Button>
+                        }
+                      />
                       <DropdownMenuContent align="end" className="glass border-glass-border text-text-main rounded-2xl p-2 min-w-[160px]">
                         <DropdownMenuItem className="cursor-pointer hover:bg-white/10 rounded-xl px-4 py-3 uppercase text-[9px] font-bold tracking-widest">
                           <Edit2 className="w-4 h-4 mr-3 text-accent-emerald" /> Modifier

@@ -6,8 +6,7 @@ import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { db } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { mockDb } from '@/lib/mockDb';
 
 const Contact = () => {
   const [loading, setLoading] = useState(false);
@@ -18,13 +17,12 @@ const Contact = () => {
     const formData = new FormData(e.currentTarget);
     
     try {
-      await addDoc(collection(db, 'contacts'), {
+      mockDb.add('contacts', {
         name: formData.get('name'),
         email: formData.get('email'),
         subject: formData.get('subject') || (type === 'quote' ? 'Demande de Devis' : 'Contact'),
         message: formData.get('message'),
         type,
-        createdAt: serverTimestamp(),
       });
       toast.success(type === 'quote' ? 'Votre demande de devis a été envoyée !' : 'Votre message a été envoyé !');
       (e.target as HTMLFormElement).reset();

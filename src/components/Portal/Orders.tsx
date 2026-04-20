@@ -28,11 +28,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { db } from '@/firebase';
-import { collection, onSnapshot, query, orderBy, updateDoc, doc } from 'firebase/firestore';
+import { mockDb } from '@/lib/mockDb';
 import { Order } from '@/types';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 const Orders = () => {
@@ -41,21 +40,26 @@ const Orders = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const ordersData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Order[];
-      setOrders(ordersData);
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    // Initial load
+    const data = mockDb.getAll('orders');
+    if (data.length === 0) {
+      // Seed with some initial data if empty
+      const initialOrders = [
+        { id: 'ORD-001', customerName: 'Jean Dupont', customerEmail: 'jean@dupont.com', totalAmount: 3500000, status: 'delivered', createdAt: new Date(Date.now() - 7200000).toISOString() },
+        { id: 'ORD-002', customerName: 'Marie Curie', customerEmail: 'marie@curie.fr', totalAmount: 1200000, status: 'processing', createdAt: new Date(Date.now() - 18000000).toISOString() }
+      ];
+      mockDb.collection('orders').set(initialOrders);
+      setOrders(initialOrders);
+    } else {
+      setOrders(data);
+    }
+    setLoading(false);
   }, []);
 
   const updateOrderStatus = async (id: string, status: Order['status']) => {
     try {
-      await updateDoc(doc(db, 'orders', id), { status });
+      mockDb.update('orders', id, { status });
+      setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
       toast.success(`Statut mis à jour: ${status}`);
     } catch (error) {
       toast.error('Erreur lors de la mise à jour');
@@ -137,17 +141,19 @@ const Orders = () => {
                     </div>
                   </TableCell>
                   <TableCell className="text-text-dim text-xs font-bold uppercase tracking-widest">
-                    {order.createdAt ? format((order.createdAt as any).toDate(), 'dd MMM yyyy, HH:mm', { locale: fr }) : 'N/A'}
+                    {order.createdAt ? format(parseISO(order.createdAt), 'dd MMM yyyy, HH:mm', { locale: fr }) : 'N/A'}
                   </TableCell>
                   <TableCell className="font-bold text-text-main">{order.totalAmount.toLocaleString()} Fc</TableCell>
                   <TableCell>{getStatusBadge(order.status)}</TableCell>
                   <TableCell className="text-right pr-10">
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="rounded-xl hover:bg-secondary/50 text-text-dim h-10 w-10">
-                          <MoreVertical className="w-5 h-5" />
-                        </Button>
-                      </DropdownMenuTrigger>
+                      <DropdownMenuTrigger
+                        render={
+                          <Button variant="ghost" size="icon" className="rounded-xl hover:bg-secondary/50 text-text-dim h-10 w-10">
+                            <MoreVertical className="w-5 h-5" />
+                          </Button>
+                        }
+                      />
                       <DropdownMenuContent align="end" className="glass border-glass-border text-text-main rounded-2xl p-2 min-w-[180px]">
                         <DropdownMenuItem className="cursor-pointer hover:bg-white/10 rounded-xl px-4 py-3 uppercase text-[9px] font-bold tracking-widest">
                           <Eye className="w-4 h-4 mr-3 text-accent-emerald" /> Détails
