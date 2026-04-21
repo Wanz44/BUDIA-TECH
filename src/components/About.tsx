@@ -1,94 +1,74 @@
 import { motion } from 'motion/react';
-import { CheckCircle2, Target, Lightbulb, Users } from 'lucide-react';
+import { Target, Lightbulb, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const About = () => {
-  const values = [
-    {
-      icon: <Target className="w-6 h-6 text-accent-emerald" />,
-      title: "Précision",
-      description: "Une sélection rigoureuse pour une qualité sans compromis."
-    },
-    {
-      icon: <Lightbulb className="w-6 h-6 text-accent-emerald" />,
-      title: "Innovation",
-      description: "L'avant-garde technologique au service de vos ambitions."
-    },
-    {
-      icon: <Users className="w-6 h-6 text-accent-emerald" />,
-      title: "Prestige",
-      description: "Un accompagnement sur mesure pour une expérience d'exception."
-    }
-  ];
-
   return (
-    <section id="about" className="py-40 bg-bg-deep relative overflow-hidden transition-colors duration-700">
+    <section id="about" className="py-32 bg-bg-deep relative overflow-hidden transition-colors duration-200">
       <div className="container mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-32 items-center">
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 1 }}
+            transition={{ duration: 0.8 }}
             className="relative"
           >
-            <div className="relative aspect-[3/4] rounded-[5rem] overflow-hidden">
+            <div className="relative aspect-video rounded-lg overflow-hidden border border-border shadow-sm">
               <img
                 src="https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&q=80&w=1200"
                 alt="Digital Innovation"
-                className="w-full h-full object-cover grayscale transition-all duration-1000 hover:grayscale-0 hover:scale-105 opacity-80"
+                className="w-full h-full object-cover transition-all duration-700 hover:scale-105"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-accent-blue/10 mix-blend-multiply transition-colors" />
             </div>
             
-            {/* Abstract Floating Element */}
-            <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-text-main rounded-full flex flex-col items-center justify-center border-8 border-bg-deep transition-colors shadow-2xl">
-               <span className="text-bg-deep text-6xl font-black mb-1">10</span>
-               <span className="text-bg-deep/40 text-[9px] font-bold uppercase tracking-[0.3em]">Ans d'Héritage</span>
+            <div className="absolute -bottom-6 -right-6 p-8 bg-accent-blue text-white rounded-lg shadow-xl max-w-[200px]">
+               <span className="block text-4xl font-bold mb-1">10</span>
+               <span className="text-[10px] font-semibold uppercase tracking-wider opacity-80">Ans d'Expertise Digitale</span>
             </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 1 }}
+            transition={{ duration: 0.6 }}
           >
-            <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-accent-emerald mb-8 block font-sans">Genèse & Vision</span>
-            <h2 className="text-5xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-12">
-              L'Équilibre du <br />
-              <span className="text-text-dim italic font-serif font-light lowercase opacity-30">Savoir-Faire</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-accent-blue mb-4 block">Notre Vision</span>
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-8">
+              L'excellence technologique au service de <span className="text-accent-blue">votre réussite</span>
             </h2>
             
-            <p className="text-lg text-text-dim mb-12 font-medium leading-relaxed italic border-l-4 border-accent-blue/20 pl-8">
-              "Dans un monde hanté par l'éphémère, BUDIA TECH s'érige en bastion de la durabilité et de l'élégance technique. Nous forgeons des liens entre l'innovation brute et le raffinement humain."
+            <p className="text-lg text-text-dim mb-10 leading-relaxed font-normal">
+              BUDIA TECH s'engage à fournir des solutions durables et performantes. Nous forgeons l'avenir de votre infrastructure en alliant innovation brute et adaptabilité institutionnelle.
             </p>
 
-            <div className="grid grid-cols-2 gap-12">
-              <div className="space-y-4">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-accent-blue">Curateur de Technologie</span>
-                <p className="text-xs text-text-dim leading-relaxed font-medium">Une sélection impitoyable des meilleurs outils de l'industrie globale.</p>
+            <div className="grid sm:grid-cols-2 gap-8 mb-12">
+              <div className="flex gap-4">
+                <div className="shrink-0 w-10 h-10 rounded-md bg-accent-blue/10 flex items-center justify-center text-accent-blue">
+                  <Target className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold mb-1">Précision Technique</h3>
+                  <p className="text-xs text-text-dim leading-relaxed">Une sélection rigoureuse des meilleurs outils technologiques du marché.</p>
+                </div>
               </div>
-              <div className="space-y-4">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-accent-emerald">Hub de Créativité</span>
-                <p className="text-xs text-text-dim leading-relaxed font-medium">L'alliance du software d'élite et de la production audiovisuelle 8K.</p>
+              <div className="flex gap-4">
+                <div className="shrink-0 w-10 h-10 rounded-md bg-accent-blue/10 flex items-center justify-center text-accent-blue">
+                  <Lightbulb className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold mb-1">Innovation Continue</h3>
+                  <p className="text-xs text-text-dim leading-relaxed">Une veille permanente pour anticiper les défis de demain.</p>
+                </div>
               </div>
             </div>
 
-            <div className="mt-16 flex flex-wrap gap-12 border-t border-text-main/5 pt-16">
-               <div className="flex flex-col group">
-                  <Target className="w-5 h-5 text-accent-blue mb-4 group-hover:text-accent-red transition-colors" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-text-main">Précision</span>
-               </div>
-               <div className="flex flex-col group">
-                  <Lightbulb className="w-5 h-5 text-accent-emerald mb-4 group-hover:text-accent-blue transition-colors" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-text-main">Avant-Garde</span>
-               </div>
-               <div className="flex flex-col group">
-                  <Users className="w-5 h-5 text-accent-silver mb-4 group-hover:text-accent-emerald transition-colors" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-text-main">Privilège</span>
-               </div>
-            </div>
+            <Button variant="link" className="p-0 h-auto text-accent-blue font-bold group flex items-center gap-2">
+              En savoir plus sur nos valeurs
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Button>
           </motion.div>
         </div>
       </div>

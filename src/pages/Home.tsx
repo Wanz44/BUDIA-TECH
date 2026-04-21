@@ -6,15 +6,10 @@ import Services from '@/components/Services';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
-interface HomeProps {
-  theme: 'light' | 'dark';
-  toggleTheme: () => void;
-}
-
-const Home = ({ theme, toggleTheme }: HomeProps) => {
+const Home = () => {
   return (
     <div className="min-h-screen bg-bg-deep selection:bg-accent-blue/20 selection:text-accent-blue">
-      <Navbar theme={theme} toggleTheme={toggleTheme} />
+      <Navbar />
       <main>
         <Hero />
         <About />

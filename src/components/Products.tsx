@@ -40,73 +40,62 @@ const Products = () => {
   ];
 
   return (
-    <section id="products" className="py-40 bg-bg-deep dark:bg-card/50 transition-colors duration-700">
+    <section id="products" className="py-32 bg-bg-deep dark:bg-[#201f1e] transition-colors duration-200">
       <div className="container mx-auto px-6">
-        <div className="grid lg:grid-cols-12 gap-12 mb-32 items-end">
-          <div className="lg:col-span-8">
-            <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-accent-emerald mb-4 block">Collection Privée</span>
-            <h2 className="text-6xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.9] text-text-main">
-              Objets de <br />
-              <span className="text-text-dim italic font-serif font-light lowercase opacity-30">Désir</span> Technique
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-20 gap-8">
+          <div className="max-w-2xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-accent-blue mb-4 block">Sélection Exclusive</span>
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-text-main">
+              Équipements de <span className="text-accent-blue">classe mondiale</span>
             </h2>
-          </div>
-          <div className="lg:col-span-4 lg:text-right">
-            <p className="text-text-dim text-sm max-w-sm ml-auto mb-8 font-medium">
-              Une sélection rigoureuse des fleurons de l'industrie, conçue pour ceux qui ne font aucun compromis entre performance et esthétique.
+            <p className="text-lg text-text-dim leading-relaxed">
+              Une gamme rigoureusement sélectionnée pour répondre aux besoins des professionnels les plus exigeants.
             </p>
-            <Button variant="ghost" className="group text-[10px] font-bold uppercase tracking-widest p-0 h-auto hover:bg-transparent text-accent-blue hover:text-accent-emerald transition-colors">
-              Explorer le catalogue complet
-              <span className="ml-2 inline-block transition-transform group-hover:translate-x-2">→</span>
-            </Button>
           </div>
+          <Button variant="outline" className="border-border text-xs font-bold uppercase tracking-widest px-8 h-12 rounded-md hover:bg-secondary">
+            Tout le catalogue
+          </Button>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-y-24 gap-x-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product, index) => (
             <motion.div
               key={product.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.98 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="group cursor-pointer"
+              transition={{ delay: index * 0.05 }}
+              className="group"
             >
-              <div className="relative mb-10 overflow-hidden bg-secondary rounded-[2.5rem] transition-colors shadow-lg hover:shadow-2xl">
-                <div className="absolute top-8 left-8 z-10 flex gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest px-4 py-2 bg-text-main text-bg-deep rounded-full transition-colors">
+              <div className="relative mb-6 overflow-hidden bg-secondary rounded-md transition-all shadow-sm group-hover:shadow-md border border-border">
+                <div className="absolute top-4 left-4 z-10">
+                  <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 bg-accent-blue text-white rounded-sm">
                     {product.badge}
                   </span>
-                  {index === 0 && (
-                    <span className="text-[10px] font-bold uppercase tracking-widest px-4 py-2 bg-accent-red text-white rounded-full animate-pulse shadow-[0_0_10px_#EF4444]">
-                      Hot
-                    </span>
-                  )}
                 </div>
                 
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full aspect-[4/5] object-cover transition-all duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0 dark:opacity-80 dark:group-hover:opacity-100"
+                  className="w-full aspect-[3/4] object-cover transition-transform duration-500 group-hover:scale-105"
                   referrerPolicy="no-referrer"
                 />
                 
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-accent-blue/10 transition-all duration-500 flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-[2px]">
-                   <Button className="bg-text-main text-bg-deep hover:bg-accent-emerald hover:text-white rounded-full px-8 h-14 text-[10px] font-bold uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 shadow-2xl">
-                     Acquérir maintenant
+                <div className="absolute bottom-4 left-4 right-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                   <Button className="w-full bg-white text-black hover:bg-white/90 rounded-md h-10 text-xs font-bold shadow-lg">
+                     Détails du produit
                    </Button>
                 </div>
               </div>
 
-              <div className="flex justify-between items-start border-b border-text-main/5 pb-8">
-                <div>
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-text-dim mb-2 block">{product.category}</span>
-                  <h3 className="text-2xl font-serif font-bold tracking-tight text-text-main group-hover:text-accent-blue transition-colors">{product.name}</h3>
-                </div>
-                <div className="text-right">
-                  <span className="text-2xl font-bold text-text-main">{product.price.toLocaleString()} Fc</span>
-                  <div className="flex items-center justify-end mt-1 text-accent-emerald">
-                    <Star className="w-2.5 h-2.5 fill-current" />
-                    <span className="text-[10px] font-bold ml-1 text-text-main">5.0</span>
+              <div className="space-y-1">
+                <span className="text-[10px] font-semibold text-accent-blue uppercase tracking-wider">{product.category}</span>
+                <h3 className="text-lg font-bold tracking-tight text-text-main group-hover:text-accent-blue transition-colors">{product.name}</h3>
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-xl font-bold text-text-main">{product.price.toLocaleString()} Fc</span>
+                  <div className="flex items-center text-accent-blue">
+                    <Star className="w-3 h-3 fill-current mr-1" />
+                    <span className="text-xs font-bold">5.0</span>
                   </div>
                 </div>
               </div>

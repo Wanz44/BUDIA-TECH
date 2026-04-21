@@ -22,95 +22,76 @@ const Hero = () => {
   }, []);
 
   return (
-    <section id="home" className="relative h-screen min-h-[800px] flex items-center overflow-hidden bg-bg-deep text-text-main transition-colors duration-700">
-      {/* Immersive Background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-bg-deep/20 via-bg-deep/50 to-bg-deep z-10" />
-        <motion.img
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          src={config.heroBgUrl || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2000"}
-          alt="Advanced Hardware"
-          className="w-full h-full object-cover opacity-30 dark:opacity-60 grayscale dark:grayscale-0"
-          referrerPolicy="no-referrer"
-        />
-        
-        {/* Animated Orbits */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-text-main/5 rounded-full animate-[spin_20s_linear_infinite]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-text-main/10 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
-      </div>
-
+    <section id="home" className="relative h-screen min-h-[700px] flex items-center overflow-hidden bg-bg-deep text-text-main transition-colors duration-200">
       <div className="container mx-auto px-6 relative z-20">
-        <div className="max-w-4xl mx-auto text-center lg:text-left lg:mx-0">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            <div className="flex items-center gap-4 mb-10 justify-center lg:justify-start">
-              <div className="inline-block border border-text-main/20 px-6 py-2 rounded-full backdrop-blur-md">
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent-emerald">
-                  Édition Limitée • Excellence {config.companyName}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-accent-red animate-pulse shadow-[0_0_10px_#EF4444]" />
-                <span className="text-[8px] font-bold uppercase tracking-widest text-text-dim">Système Actif</span>
-              </div>
+            <div className="flex items-center gap-2 mb-6">
+              <span className="text-xs font-semibold text-accent-blue tracking-wide uppercase">
+                Expertise & Innovation
+              </span>
+              <div className="h-[1px] w-12 bg-accent-blue/30" />
             </div>
             
-            <h1 className="text-[12vw] lg:text-[7vw] font-black leading-[0.85] uppercase tracking-tighter mb-8 bg-clip-text text-transparent bg-gradient-to-r from-text-main to-accent-silver">
-              {config.companyName.split(' ')[0]} <br />
-              <span className="text-transparent font-outline-2 opacity-50 dark:opacity-20 hover:opacity-100 transition-all">
-                {config.companyName.split(' ')[1] || 'TECH'}
-              </span>
+            <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight mb-8">
+              {config.companyName.split(' ')[0]} <span className="text-accent-blue">{config.companyName.split(' ')[1] || 'TECH'}</span>
             </h1>
             
-            <div className="grid lg:grid-cols-2 gap-12 items-end">
-              <div>
-                <p className="text-xl text-text-dim font-medium leading-relaxed mb-10 max-w-md">
-                  {config.description || "BUDIA TECH redéfinit les standards de l'ingénierie numérique. Nous forgeons l'avenir de votre infrastructure."}
-                </p>
-                <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-                  <Button size="lg" className="bg-accent-emerald text-white dark:text-black hover:bg-accent-blue hover:text-white transition-all duration-500 px-12 h-16 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-2xl shadow-accent-emerald/20">
-                    Découvrir la Collection
-                    <ArrowRight className="ml-3 w-4 h-4" />
-                  </Button>
-                  <Button size="lg" variant="outline" className="border-text-main/20 text-text-main hover:bg-text-main hover:text-bg-deep transition-all duration-500 px-12 h-16 rounded-full text-[10px] font-bold uppercase tracking-widest backdrop-blur-xl">
-                    Expertises
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="hidden lg:flex justify-end">
-                <div className="text-right space-y-6">
-                  <div className="pb-6 border-b border-text-main/10">
-                    <span className="block text-4xl font-serif font-light mb-1">Congo</span>
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-text-dim">Hub Technologique Premium</span>
-                  </div>
-                  <div className="flex justify-end gap-10">
-                    <div>
-                      <span className="block text-2xl font-bold">500+</span>
-                      <span className="text-[8px] uppercase font-bold tracking-widest text-text-dim">Actifs</span>
-                    </div>
-                    <div>
-                      <span className="block text-2xl font-bold">15+</span>
-                      <span className="text-[8px] uppercase font-bold tracking-widest text-text-dim">Pays</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <p className="text-xl text-text-dim font-normal leading-relaxed mb-12 max-w-lg">
+              {config.description || "Nous redéfinissons les standards de l'ingénierie numérique pour forger l'avenir de votre infrastructure technologique."}
+            </p>
+            
+            <div className="flex flex-wrap gap-4">
+              <Button size="lg" className="bg-accent-blue text-white hover:bg-accent-blue/90 px-10 h-14 rounded-md text-sm font-semibold transition-all">
+                Démarrer votre projet
+              </Button>
+              <Button size="lg" variant="outline" className="border-border text-text-main hover:bg-secondary px-10 h-14 rounded-md text-sm font-semibold">
+                Nos expertises
+              </Button>
             </div>
           </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="hidden lg:block relative"
+          >
+            <div className="relative z-10 glass-card p-1 bg-white dark:bg-[#2b2a29] shadow-2xl rounded-lg overflow-hidden">
+              <img
+                src={config.heroBgUrl || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2000"}
+                alt="Technology Visualization"
+                className="w-full aspect-[4/3] object-cover rounded-md"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            
+            {/* Subtle floating accent card */}
+            <motion.div 
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-6 -left-6 glass shadow-xl p-6 rounded-lg max-w-[200px] z-20"
+            >
+              <Shield className="w-8 h-8 text-accent-emerald mb-3" />
+              <h3 className="text-sm font-bold mb-1 uppercase tracking-tighter">Sécurité</h3>
+              <p className="text-[11px] text-text-dim font-medium">Standards institutionnels et cryptage avancé.</p>
+            </motion.div>
+
+            <motion.div 
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute -top-6 -right-6 glass shadow-xl p-6 rounded-lg max-w-[200px] z-20"
+            >
+              <Globe className="w-8 h-8 text-accent-blue mb-3" />
+              <h3 className="text-sm font-bold mb-1 uppercase tracking-tighter">Impact</h3>
+              <p className="text-[11px] text-text-dim font-medium">Connectivité globale sans frontières.</p>
+            </motion.div>
+          </motion.div>
         </div>
-      </div>
-      
-      {/* Bottom Rail Overlay */}
-      <div className="absolute bottom-10 left-10 hidden xl:block">
-        <span className="writing-vertical-lr rotate-180 text-[10px] font-bold uppercase tracking-[0.5em] text-text-dim">
-          SCROLL TO EXPLORE THE FUTURE
-        </span>
       </div>
     </section>
   );

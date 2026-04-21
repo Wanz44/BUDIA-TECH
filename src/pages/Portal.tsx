@@ -164,7 +164,7 @@ const Portal = () => {
 
       {/* Floating Bottom Navigation (Windows 11 Style) */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-        <nav className="bg-white/90 dark:bg-black/80 border border-border px-4 py-3 rounded-[30px] shadow-xl backdrop-blur-2xl flex items-center space-x-2">
+        <nav className="bg-white/90 border border-border px-4 py-3 rounded-[30px] shadow-xl backdrop-blur-2xl flex items-center space-x-2">
           {menuItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
@@ -173,7 +173,7 @@ const Portal = () => {
                 to={item.path}
                 className={`flex items-center space-x-3 px-5 py-3 rounded-[24px] transition-all duration-300 group relative ${
                   isActive
-                    ? 'bg-accent-emerald text-white dark:text-black shadow-lg shadow-accent-emerald/20 font-bold'
+                    ? 'bg-accent-emerald text-white shadow-lg shadow-accent-emerald/20 font-bold'
                     : 'hover:bg-accent-emerald/5 text-text-dim hover:text-accent-emerald'
                 }`}
               >

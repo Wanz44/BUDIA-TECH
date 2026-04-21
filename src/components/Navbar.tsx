@@ -5,12 +5,7 @@ import { Menu, X, Cpu, Settings, Sun, Moon, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { mockDb } from '@/lib/mockDb';
 
-interface NavbarProps {
-  theme: 'light' | 'dark';
-  toggleTheme: () => void;
-}
-
-const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
+const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [config, setConfig] = useState<any>({
@@ -50,64 +45,51 @@ const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-bg-deep/80 backdrop-blur-2xl border-b border-text-main/5 py-3 shadow-lg' 
-          : 'bg-transparent py-8'
+          ? 'bg-white/90 dark:bg-[#201f1e]/90 backdrop-blur-md border-b border-border py-2 shadow-sm' 
+          : 'bg-transparent py-6'
       }`}
     >
       <div className="container mx-auto px-6">
         <div className="flex justify-between items-center">
-          <Link to="/" className="group flex items-center gap-4">
+          <Link to="/" className="group flex items-center gap-3">
             {config.logoUrl ? (
-              <img src={config.logoUrl} alt="Logo" className="h-10 w-auto object-contain" referrerPolicy="no-referrer" />
+              <img src={config.logoUrl} alt="Logo" className="h-8 w-auto object-contain" referrerPolicy="no-referrer" />
             ) : (
-              <div className="bg-accent-blue/10 p-2 rounded-lg text-accent-blue hidden sm:block">
-                <Cpu className="w-6 h-6" />
+              <div className="bg-accent-blue p-1.5 rounded-sm text-white hidden sm:block">
+                <Cpu className="w-5 h-5" />
               </div>
             )}
-            <span className="text-2xl font-black tracking-tighter uppercase transition-colors duration-500 text-text-main">
-              {brandMain} <span className="text-accent-blue group-hover:text-accent-emerald transition-colors">{brandSub}</span>
+            <span className="text-xl font-bold tracking-tight text-text-main">
+              {brandMain}<span className="text-accent-blue">{brandSub}</span>
             </span>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center space-x-12">
+          <div className="hidden lg:flex items-center space-x-10">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="text-[10px] font-bold uppercase tracking-[0.3em] transition-all duration-500 text-text-dim hover:text-accent-blue"
+                className="text-xs font-semibold text-text-dim hover:text-accent-blue transition-colors relative group py-1"
               >
                 {link.name}
+                <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-accent-blue transition-all group-hover:w-full" />
               </a>
             ))}
             
-            <div className="flex items-center space-x-6 pl-12 border-l border-text-main/10 transition-colors duration-500">
-              <button
-                onClick={toggleTheme}
-                className="p-2 transition-colors text-text-dim hover:text-text-main"
-                aria-label="Toggle theme"
-              >
-                {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-              </button>
-              
+            <div className="flex items-center space-x-4 pl-8 border-l border-border transition-colors duration-300">
               <Link to="/portal" title="Portail Client">
-                <Button className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 bg-text-main text-bg-deep hover:bg-accent-blue hover:text-white hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
-                  <Lock className="w-4 h-4" />
+                <Button className="h-10 px-6 rounded-md bg-accent-blue text-white hover:bg-accent-blue/90 text-xs font-bold transition-all shadow-sm">
+                  Connexion
                 </Button>
               </Link>
             </div>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="lg:hidden flex items-center space-x-6">
-            <button
-              onClick={toggleTheme}
-              className="p-2 transition-colors text-text-dim hover:text-text-main"
-            >
-              {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-            </button>
+          <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="transition-colors text-text-main"
@@ -162,11 +144,6 @@ const Navbar = ({ theme, toggleTheme }: NavbarProps) => {
             <div className="mt-auto pt-10 border-t border-text-main/10">
                <div className="flex items-center justify-between mb-8 px-4 text-text-dim">
                   <span className="text-[10px] font-black uppercase tracking-[0.3em]">Écosystème Digital</span>
-                  <div className="flex gap-4">
-                    <button onClick={toggleTheme} className="p-3 bg-text-main/5 rounded-2xl">
-                      {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-                    </button>
-                  </div>
                </div>
                <Link to="/portal" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button className="w-full bg-accent-blue text-white hover:bg-accent-emerald hover:text-black h-24 rounded-[2.5rem] transition-all shadow-[0_20px_40px_rgba(59,130,246,0.2)] flex items-center justify-center group">

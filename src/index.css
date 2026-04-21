@@ -3,100 +3,61 @@
 @import "shadcn/tailwind.css";
 
 @theme inline {
-    --font-heading: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-    --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-heading: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
     
     --color-bg-deep: var(--bg-color);
     --color-glass-bg: var(--glass-bg);
     --color-glass-border: var(--glass-border);
-    --color-accent-emerald: #10B981;
-    --color-accent-blue: #3B82F6;
-    --color-accent-silver: #94A3B8;
-    --color-accent-red: #EF4444;
+    --color-accent-emerald: #107c10; /* Microsoft Green */
+    --color-accent-blue: #0078d4; /* Microsoft Blue */
+    --color-accent-silver: #a1a1a1;
+    --color-accent-red: #d83b01; /* Microsoft Red/Orange */
     --color-text-main: var(--text-main);
     --color-text-dim: var(--text-dim);
     --color-text-outline: var(--text-outline);
-    --color-border: var(--glass-border);
-    --color-ring: #10B981;
+    --color-border: var(--border);
+    --color-card: var(--card);
+    --color-secondary: var(--secondary);
+    --color-ring: #0078d4;
 }
 
 :root {
-    --bg-color: #F8FAFC;
-    --text-main: #0F172A;
-    --text-dim: #64748B;
-    --text-outline: #0F172A;
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(15, 23, 42, 0.08);
+    --bg-color: #ffffff;
+    --text-main: #323130;
+    --text-dim: #605e5d;
+    --text-outline: #323130;
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(0, 0, 0, 0.1);
     
-    --background: #F8FAFC;
-    --foreground: #0F172A;
-    --card: #FFFFFF;
-    --card-foreground: #0F172A;
-    --popover: #FFFFFF;
-    --popover-foreground: #0F172A;
-    --primary: #10B981;
-    --primary-foreground: #FFFFFF;
-    --secondary: #F1F5F9;
-    --secondary-foreground: #0F172A;
-    --muted: #F1F5F9;
-    --muted-foreground: #64748B;
-    --accent: #F1F5F9;
-    --accent-foreground: #10B981;
-    --destructive: #EF4444;
-    --border: #E2E8F0;
-    --input: #E2E8F0;
-    --ring: #10B981;
-    --radius: 1.5rem;
-}
-
-.dark {
-    --bg-color: #020617;
-    --text-main: #F8FAFC;
-    --text-dim: #94A3B8;
-    --text-outline: #F8FAFC;
-    --glass-bg: rgba(15, 23, 42, 0.9);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    
-    --background: #020617;
-    --foreground: #F8FAFC;
-    --card: #0F172A;
-    --card-foreground: #F8FAFC;
-    --popover: #020617;
-    --popover-foreground: #F8FAFC;
-    --primary: #10B981;
-    --primary-foreground: #000000;
-    --secondary: #1E293B;
-    --secondary-foreground: #F8FAFC;
-    --muted: #1E293B;
-    --muted-foreground: #94A3B8;
-    --accent: #1E293B;
-    --accent-foreground: #10B981;
-    --destructive: #7F1D1D;
-    --border: #1E293B;
-    --input: #1E293B;
-    --ring: #10B981;
+    --background: #ffffff;
+    --foreground: #323130;
+    --card: #ffffff;
+    --card-foreground: #323130;
+    --popover: #ffffff;
+    --popover-foreground: #323130;
+    --primary: #0078d4;
+    --primary-foreground: #ffffff;
+    --secondary: #f3f2f1;
+    --secondary-foreground: #323130;
+    --muted: #f3f2f1;
+    --muted-foreground: #605e5d;
+    --accent: #f3f2f1;
+    --accent-foreground: #0078d4;
+    --destructive: #d83b01;
+    --border: #edebe9;
+    --input: #ffffff;
+    --ring: #0078d4;
+    --radius: 0.5rem; /* Microsoft uses smaller radius than 1.5rem */
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50 transition-colors duration-300;
+    @apply border-border outline-ring/50 transition-colors duration-200;
   }
   body {
-    @apply bg-bg-deep text-text-main min-h-screen leading-relaxed;
-    background-image: 
-        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
-        linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
-    background-attachment: fixed;
-  }
-  .dark body {
-    background-image: 
-        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    @apply bg-bg-deep text-text-main min-h-screen leading-relaxed antialiased;
+    background-image: none; /* Microsoft style is clean and flat or with very subtle acrylic */
   }
   html {
     @apply font-sans;
@@ -105,26 +66,26 @@
 
 @layer utilities {
   .glass {
-    @apply bg-glass-bg border border-glass-border backdrop-blur-xl;
+    @apply bg-glass-bg border border-glass-border backdrop-blur-2xl;
   }
   .glass-card {
-    @apply bg-glass-bg border border-glass-border backdrop-blur-xl rounded-2xl shadow-xl;
+    @apply bg-card border border-glass-border rounded-lg shadow-sm;
   }
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-emerald to-accent-blue;
+    @apply text-accent-blue; /* Microsoft doesn't use gradients for text much */
   }
   .btn-glass {
-    @apply bg-gradient-to-br from-accent-blue to-accent-emerald text-white shadow-lg shadow-accent-blue/10 hover:shadow-accent-blue/30 transition-all duration-300;
+    @apply bg-accent-blue text-white shadow hover:bg-accent-blue/90 transition-all duration-200;
   }
   .font-serif {
-    font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    font-family: inherit; /* Segoe UI used for titles too */
   }
 
   .font-outline-1 {
     -webkit-text-stroke: 1px var(--text-outline);
   }
   .font-outline-2 {
-    -webkit-text-stroke: 2px var(--text-outline);
+    -webkit-text-stroke: 1px var(--text-outline); /* Thinner for Microsoft look */
   }
   .writing-vertical-lr {
     writing-mode: vertical-lr;
@@ -146,11 +107,5 @@
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(15, 23, 42, 0.3);
     background-clip: padding-box;
-  }
-  .dark ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
-  }
-  .dark ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
   }
 }

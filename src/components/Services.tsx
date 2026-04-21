@@ -42,56 +42,44 @@ const Services = () => {
   ];
 
   return (
-    <section id="services" className="py-40 bg-bg-deep text-text-main relative overflow-hidden transition-colors duration-700">
-      {/* Absolute grid background */}
-      <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
-           style={{ backgroundImage: 'radial-gradient(circle, var(--color-accent-blue) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-
+    <section id="services" className="py-32 bg-bg-deep text-text-main relative overflow-hidden transition-colors duration-200">
       <div className="container mx-auto px-6 relative z-10">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-32 gap-12">
-          <div className="max-w-3xl">
-            <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-accent-emerald mb-4 block">Ingénierie & Transformation</span>
-            <h2 className="text-5xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.9]">
-              Architectures de <br />
-              <span className="text-text-dim/20 italic font-serif font-light lowercase">Haute Précision</span>
-            </h2>
-          </div>
-          <div className="lg:text-right">
-            <p className="text-text-dim text-sm max-w-sm ml-auto mb-6 font-medium">
-              Nous concevons des écosystèmes numériques où chaque ligne de code est une intention vers l'excellence.
-            </p>
-          </div>
+        <div className="max-w-3xl mb-16">
+          <span className="text-xs font-bold uppercase tracking-widest text-accent-blue mb-4 block">Expertise Technique</span>
+          <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-6">
+            Des services conçus pour <span className="text-accent-blue">votre transformation</span>
+          </h2>
+          <p className="text-lg text-text-dim max-w-2xl leading-relaxed">
+            Nous concevons des architectures numériques robustes et élégantes, adaptées aux exigences des leaders de l'industrie.
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-text-main/5 border border-text-main/5">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 1, delay: index * 0.1 }}
-              className="group bg-bg-deep p-12 hover:bg-secondary/50 transition-all duration-700 relative overflow-hidden"
+              transition={{ duration: 0.5, delay: index * 0.05 }}
+              className="group glass-card p-10 hover:border-accent-blue/40 transition-all duration-300 flex flex-col h-full"
             >
-              <div className="relative z-10">
-                <div className="mb-12 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700">
+              <div className="mb-8 p-3 rounded-md bg-accent-blue/5 w-fit group-hover:bg-accent-blue/10 transition-colors">
+                <div className="text-accent-blue">
                   {service.icon}
                 </div>
-                <h4 className="text-[12px] font-bold mb-6 uppercase tracking-[0.2em] group-hover:text-accent-blue transition-colors">{service.title}</h4>
-                <p className="text-text-dim group-hover:text-text-main text-xs leading-relaxed mb-12 font-medium transition-colors duration-500">
-                  {service.description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {service.tags.map((tag, tIndex) => (
-                    <span key={tIndex} className="text-[7px] font-bold uppercase tracking-widest text-text-dim border border-text-main/10 px-3 py-1.5 rounded-sm group-hover:border-accent-blue/30 transition-colors">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
               </div>
-              
-              {/* Decorative corner accent */}
-              <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-text-main/5 group-hover:border-accent-blue transition-all duration-500" />
+              <h4 className="text-lg font-bold mb-4 tracking-tight">{service.title}</h4>
+              <p className="text-text-dim text-sm leading-relaxed mb-8 font-normal flex-grow">
+                {service.description}
+              </p>
+              <div className="flex flex-wrap gap-2 border-t border-border pt-6 mt-auto">
+                {service.tags.map((tag, tIndex) => (
+                  <span key={tIndex} className="text-[10px] font-semibold uppercase tracking-wider text-accent-blue opacity-80">
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </motion.div>
           ))}
         </div>

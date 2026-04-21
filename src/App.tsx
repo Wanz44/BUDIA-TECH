@@ -6,11 +6,6 @@ import Portal from './pages/Portal';
 import { mockDb } from '@/lib/mockDb';
 
 export default function App() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('theme');
-    return (saved as 'light' | 'dark') || 'light';
-  });
-
   const [siteBg, setSiteBg] = useState<any>({ siteBgType: 'grid', customBgUrl: '' });
 
   useEffect(() => {
@@ -38,9 +33,9 @@ export default function App() {
     ]);
 
     const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-    localStorage.setItem('theme', theme);
+    root.classList.remove('dark');
+    root.classList.add('light');
+    localStorage.setItem('theme', 'light');
 
     const updateBgConfig = () => {
       const saved = mockDb.getAll('siteConfig').find((c: any) => c.id === 'branding');
@@ -49,11 +44,7 @@ export default function App() {
     updateBgConfig();
     window.addEventListener('siteConfigUpdated', updateBgConfig);
     return () => window.removeEventListener('siteConfigUpdated', updateBgConfig);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
+  }, []);
 
   const bgStyles = () => {
     if (siteBg.siteBgType === 'custom' && siteBg.customBgUrl) {
@@ -71,7 +62,7 @@ export default function App() {
     <div style={bgStyles()} className={`min-h-screen transition-colors duration-700 ${siteBg.siteBgType === 'grid' ? 'bg-grid' : ''}`}>
       <Router>
         <Routes>
-          <Route path="/" element={<Home theme={theme} toggleTheme={toggleTheme} />} />
+          <Route path="/" element={<Home />} />
           <Route path="/portal/*" element={<Portal />} />
         </Routes>
         <Toaster position="top-right" />
