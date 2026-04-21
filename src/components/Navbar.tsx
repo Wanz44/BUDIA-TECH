@@ -35,7 +35,7 @@ const Navbar = () => {
     { name: 'Accueil', href: '#home' },
     { name: 'À Propos', href: '#about' },
     { name: 'Services', href: '#services' },
-    { name: 'Galerie', href: '#products' },
+    { name: 'Magasin', href: '#products' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -79,9 +79,9 @@ const Navbar = () => {
             ))}
             
             <div className="flex items-center ml-4 pl-4 border-l border-border transition-colors duration-300">
-              <Link to="/portal">
-                <Button className="btn-primary h-11 text-sm shadow-none hover:shadow-md">
-                  Se connecter
+              <Link to="/portal" title="Espace Client">
+                <Button className="btn-primary w-11 h-11 p-0 rounded-full shadow-none hover:shadow-md flex items-center justify-center">
+                  <Lock className="w-5 h-5" />
                 </Button>
               </Link>
             </div>
@@ -140,8 +140,8 @@ const Navbar = () => {
             
             <div className="mt-auto">
                <Link to="/portal" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="w-full btn-primary h-14 text-sm font-bold shadow-lg shadow-primary/20">
-                    Espace Professionnel
+                  <Button className="w-full btn-primary h-16 rounded-3xl flex items-center justify-center shadow-lg shadow-primary/20 group">
+                    <Lock className="w-8 h-8 group-hover:scale-110 transition-transform" />
                   </Button>
                </Link>
             </div>

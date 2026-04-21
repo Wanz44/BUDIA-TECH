@@ -93,23 +93,23 @@ const Dashboard = () => {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'delivered': return <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20 border-green-500/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">Livré</Badge>;
-      case 'processing': return <Badge className="bg-accent-emerald/10 text-accent-emerald hover:bg-accent-emerald/20 border-accent-emerald/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">En cours</Badge>;
-      case 'pending': return <Badge className="bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 border-yellow-500/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">Attente</Badge>;
-      case 'cancelled': return <Badge className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">Annulé</Badge>;
-      default: return <Badge className="bg-accent-silver/10 text-accent-silver uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">{status}</Badge>;
+      case 'delivered': return <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-none px-2.5 py-0.5 rounded-full text-[10px] font-semibold">Livré</Badge>;
+      case 'processing': return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-none px-2.5 py-0.5 rounded-full text-[10px] font-semibold">En cours</Badge>;
+      case 'pending': return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-200 border-none px-2.5 py-0.5 rounded-full text-[10px] font-semibold">Attente</Badge>;
+      case 'cancelled': return <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-none px-2.5 py-0.5 rounded-full text-[10px] font-semibold">Annulé</Badge>;
+      default: return <Badge className="bg-gray-100 text-gray-700 px-2.5 py-0.5 rounded-full text-[10px] font-semibold">{status}</Badge>;
     }
   };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="glass border-glass-border p-5 rounded-2xl shadow-2xl backdrop-blur-2xl">
-          <p className="text-[10px] font-black uppercase tracking-widest text-text-dim mb-2">{label}</p>
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-accent-emerald shadow-[0_0_8px_#10B981]" />
-            <p className="text-sm font-bold text-text-main">
-              {payload[0].value.toLocaleString()} <span className="text-[10px] text-accent-emerald font-black">FC</span>
+        <div className="acrylic border border-white/40 p-4 rounded-lg shadow-xl">
+          <p className="text-[10px] font-bold text-gray-500 mb-1">{label}</p>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[#0067c0]" />
+            <p className="text-sm font-bold text-[#202124]">
+              {payload[0].value.toLocaleString()} <span className="text-[10px] text-gray-400 font-bold">FC</span>
             </p>
           </div>
         </div>
@@ -119,34 +119,33 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-serif font-bold text-text-main tracking-tight">Tableau de Bord</h1>
-        <p className="text-text-dim text-[10px] uppercase tracking-widest font-bold mt-2">Bienvenue dans l'écosystème de gestion BUDIA TECH.</p>
+        <h1 className="text-2xl font-bold text-[#202124]">Tableau de Bord</h1>
+        <p className="text-gray-500 text-xs font-medium mt-1">Surveillez l'activité de votre écosystème technologique.</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.name}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            transition={{ delay: index * 0.05 }}
           >
-            <Card className="glass border-glass-border shadow-xl rounded-[2rem] overflow-hidden group hover:border-accent-emerald transition-all duration-500">
-              <CardContent className="p-8">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="bg-accent-emerald/10 p-4 rounded-2xl text-accent-emerald border border-accent-emerald/20 group-hover:scale-110 transition-transform duration-500">
+            <Card className="win-card border-none shadow-sm hover:shadow-md transition-all duration-200">
+              <CardContent className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="bg-[#0067c0]/10 p-2.5 rounded-md text-[#0067c0]">
                     {stat.icon}
                   </div>
-                  <div className={`flex items-center text-[10px] font-bold px-2 py-1 rounded-lg ${stat.isUp ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                  <div className={`flex items-center text-[10px] font-bold px-2 py-0.5 rounded-sm ${stat.isUp ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                     {stat.trend}
-                    {stat.isUp ? <ArrowUpRight className="w-3 h-3 ml-1" /> : <ArrowDownRight className="w-3 h-3 ml-1" />}
                   </div>
                 </div>
-                <p className="text-text-dim text-[9px] font-bold uppercase tracking-widest mb-2">{stat.name}</p>
-                <p className="text-3xl font-bold text-text-main tracking-tight">{stat.value}</p>
+                <p className="text-gray-500 text-[11px] font-semibold mb-1">{stat.name}</p>
+                <p className="text-2xl font-bold text-[#202124] tracking-tight">{stat.value}</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -154,50 +153,49 @@ const Dashboard = () => {
       </div>
 
       {/* Sales Evolution Chart */}
-      <Card className="glass border-glass-border shadow-xl rounded-[2.5rem] overflow-hidden">
-        <CardHeader className="p-10 pb-0">
-          <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Évolution des Ventes (7 jours)</CardTitle>
+      <Card className="win-card border-none">
+        <CardHeader className="p-6 pb-2">
+          <CardTitle className="text-xs font-bold text-gray-400 uppercase tracking-wider">Performance des Ventes</CardTitle>
         </CardHeader>
-        <CardContent className="p-10 h-[400px]">
+        <CardContent className="p-6 pt-0 h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={salesData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <AreaChart data={salesData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#0067c0" stopOpacity={0.15}/>
+                  <stop offset="95%" stopColor="#0067c0" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148, 163, 184, 0.1)" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
               <XAxis 
                 dataKey="date" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fill: '#64748B', fontWeight: 600 }}
+                tick={{ fontSize: 10, fill: '#6B7280', fontWeight: 500 }}
                 dy={10}
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fill: '#64748B', fontWeight: 600 }}
-                tickFormatter={(value) => `${(value / 1000).toFixed(1)}k`}
+                tick={{ fontSize: 10, fill: '#6B7280', fontWeight: 500 }}
+                tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
               />
               <Tooltip 
                 content={<CustomTooltip />}
-                cursor={{ stroke: 'rgba(16, 185, 129, 0.2)', strokeWidth: 2 }}
+                cursor={{ stroke: '#0067c0', strokeWidth: 1, strokeDasharray: '4 4' }}
               />
               <Area 
                 type="monotone" 
                 dataKey="sales" 
-                stroke="#10B981" 
-                strokeWidth={3}
+                stroke="#0067c0" 
+                strokeWidth={2}
                 fillOpacity={1} 
                 fill="url(#colorSales)"
                 activeDot={{ 
-                  r: 6, 
-                  stroke: '#10B981', 
+                  r: 5, 
+                  stroke: '#0067c0', 
                   strokeWidth: 2, 
-                  fill: 'white',
-                  className: "filter drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+                  fill: 'white'
                 }}
               />
             </AreaChart>
@@ -205,75 +203,72 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      <div className="grid lg:grid-cols-3 gap-10">
+      <div className="grid lg:grid-cols-2 gap-6">
         {/* Recent Orders */}
-        <Card className="lg:col-span-2 glass border-glass-border shadow-xl rounded-[2.5rem] overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between p-10 pb-0">
-            <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Flux de Commandes Récentes</CardTitle>
-            <Button variant="ghost" className="text-accent-emerald text-[9px] font-bold uppercase tracking-widest hover:bg-accent-emerald/10 h-10 px-6 rounded-xl">Tout voir</Button>
+        <Card className="win-card border-none">
+          <CardHeader className="flex flex-row items-center justify-between p-6 pb-2">
+            <CardTitle className="text-xs font-bold text-gray-400 uppercase tracking-wider">Flux de Commandes</CardTitle>
+            <Button variant="ghost" className="text-[#0067c0] text-[10px] font-bold hover:bg-[#0067c0]/5 h-8 px-4 rounded-md">Tout voir</Button>
           </CardHeader>
-          <CardContent className="p-10">
-            <div className="space-y-8">
-              {orders.length > 0 ? orders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between group cursor-pointer">
-                  <div className="flex items-center space-x-5">
-                    <div className="bg-secondary/50 p-4 rounded-2xl group-hover:bg-accent-emerald/10 border border-border group-hover:border-accent-emerald/20 transition-all duration-300">
-                      <ShoppingCart className="w-5 h-5 text-text-dim group-hover:text-accent-emerald" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-text-main group-hover:text-accent-emerald transition-colors">{order.customer || order.name}</p>
-                      <p className="text-[9px] text-text-dim uppercase tracking-widest font-bold mt-1">{order.items ? `${order.items.length} articles` : 'Commande'} • {order.id}</p>
-                    </div>
+          <CardContent className="p-6 space-y-4">
+            {orders.length > 0 ? orders.map((order) => (
+              <div key={order.id} className="flex items-center justify-between p-3 rounded-md hover:bg-black/5 transition-colors cursor-pointer group">
+                <div className="flex items-center space-x-4">
+                  <div className="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center text-gray-400 group-hover:text-[#0067c0] group-hover:bg-[#0067c0]/10 transition-colors">
+                    <ShoppingCart className="w-5 h-5" />
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-text-main mb-2">{order.total} Fc</p>
-                    <div className="flex items-center justify-end space-x-3">
-                      <span className="text-[9px] text-text-dim font-bold uppercase tracking-widest">
-                        {format(parseISO(order.createdAt), 'dd/MM HH:mm')}
-                      </span>
-                      {getStatusBadge(order.status)}
-                    </div>
+                  <div>
+                    <p className="text-sm font-bold text-[#202124]">{order.customer || order.name}</p>
+                    <p className="text-[10px] text-gray-500 font-medium">{order.id} • {format(parseISO(order.createdAt), 'dd MMMM', { locale: fr })}</p>
                   </div>
                 </div>
-              )) : (
-                <div className="text-center py-10">
-                  <p className="text-text-dim text-xs font-bold uppercase tracking-widest">Aucune commande récente</p>
+                <div className="text-right flex flex-col items-end gap-1.5">
+                  <p className="text-sm font-bold text-[#202124]">{order.total} Fc</p>
+                  {getStatusBadge(order.status)}
                 </div>
-              )}
-            </div>
+              </div>
+            )) : (
+              <p className="text-center py-6 text-xs text-gray-400 font-medium">Aucune commande récente</p>
+            )}
           </CardContent>
         </Card>
 
         {/* Activity Feed */}
-        <Card className="glass border-glass-border shadow-xl rounded-[2.5rem] overflow-hidden">
-          <CardHeader className="p-10 pb-0">
-            <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Journal d'Activités</CardTitle>
+        <Card className="win-card border-none">
+          <CardHeader className="p-6 pb-2">
+            <CardTitle className="text-xs font-bold text-gray-400 uppercase tracking-wider">Activités Récentes</CardTitle>
           </CardHeader>
-          <CardContent className="p-10">
-            <div className="space-y-10 relative before:absolute before:inset-0 before:left-[13px] before:w-[1px] before:bg-border">
-              <div className="relative pl-10">
-                <div className="absolute left-0 top-1 w-7 h-7 bg-accent-emerald/10 border border-accent-emerald/20 rounded-full flex items-center justify-center z-10">
-                  <Clock className="w-3.5 h-3.5 text-accent-emerald" />
+          <CardContent className="p-6">
+            <div className="space-y-6 relative before:absolute before:inset-0 before:left-[11px] before:w-[1px] before:bg-gray-200">
+              <div className="relative pl-8">
+                <div className="absolute left-0 top-0.5 w-6 h-6 bg-blue-50 border border-blue-100 rounded-full flex items-center justify-center z-10 shadow-sm">
+                  <Clock className="w-3 h-3 text-blue-600" />
                 </div>
-                <p className="text-sm font-bold text-text-main">Nouveau produit ajouté</p>
-                <p className="text-xs text-text-dim mt-1 font-medium">MacBook Pro M3 Max a été ajouté à l'inventaire.</p>
-                <p className="text-[9px] text-accent-emerald font-bold uppercase tracking-widest mt-2">Il y a 10 min</p>
+                <div>
+                  <p className="text-xs font-bold text-[#202124]">Nouvel article en stock</p>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-relaxed">MacBook Pro M3 Max a été inventorié.</p>
+                  <span className="text-[9px] text-gray-400 font-bold uppercase mt-1 inline-block">10 min</span>
+                </div>
               </div>
-              <div className="relative pl-10">
-                <div className="absolute left-0 top-1 w-7 h-7 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center z-10">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+              <div className="relative pl-8">
+                <div className="absolute left-0 top-0.5 w-6 h-6 bg-green-50 border border-green-100 rounded-full flex items-center justify-center z-10 shadow-sm">
+                  <CheckCircle2 className="w-3 h-3 text-green-600" />
                 </div>
-                <p className="text-sm font-bold text-text-main">Commande expédiée</p>
-                <p className="text-xs text-text-dim mt-1 font-medium">La commande #ORD-7280 est en route.</p>
-                <p className="text-[9px] text-green-500 font-bold uppercase tracking-widest mt-2">Il y a 45 min</p>
+                <div>
+                  <p className="text-xs font-bold text-[#202124]">Expédition confirmée</p>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-relaxed">Commande #ORD-7280 envoyée au client.</p>
+                  <span className="text-[9px] text-gray-400 font-bold uppercase mt-1 inline-block">45 min</span>
+                </div>
               </div>
-              <div className="relative pl-10">
-                <div className="absolute left-0 top-1 w-7 h-7 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center z-10">
-                  <AlertCircle className="w-3.5 h-3.5 text-red-500" />
+              <div className="relative pl-8">
+                <div className="absolute left-0 top-0.5 w-6 h-6 bg-red-50 border border-red-100 rounded-full flex items-center justify-center z-10 shadow-sm">
+                  <AlertCircle className="w-3 h-3 text-red-600" />
                 </div>
-                <p className="text-sm font-bold text-text-main">Stock critique</p>
-                <p className="text-xs text-text-dim mt-1 font-medium">Seulement 2 unités restantes pour "Système 8K".</p>
-                <p className="text-[9px] text-red-500 font-bold uppercase tracking-widest mt-2">Il y a 2h</p>
+                <div>
+                  <p className="text-xs font-bold text-[#202124]">Alerte stock bas</p>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-relaxed">Stock limité pour "Caméra Surveillance 4K".</p>
+                  <span className="text-[9px] text-gray-400 font-bold uppercase mt-1 inline-block">Il y a 2h</span>
+                </div>
               </div>
             </div>
           </CardContent>

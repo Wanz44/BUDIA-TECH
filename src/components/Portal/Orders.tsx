@@ -68,12 +68,12 @@ const Orders = () => {
 
   const getStatusBadge = (status: Order['status']) => {
     switch (status) {
-      case 'delivered': return <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20 border-green-500/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">Livré</Badge>;
-      case 'processing': return <Badge className="bg-accent-emerald/10 text-accent-emerald hover:bg-accent-emerald/20 border-accent-emerald/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">En cours</Badge>;
-      case 'pending': return <Badge className="bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 border-yellow-500/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">Attente</Badge>;
-      case 'shipped': return <Badge className="bg-purple-500/10 text-purple-500 hover:bg-purple-500/20 border-purple-500/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">Expédié</Badge>;
-      case 'cancelled': return <Badge className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20 uppercase text-[8px] font-bold tracking-widest px-3 py-1 rounded-lg">Annulé</Badge>;
-      default: return <Badge>{status}</Badge>;
+      case 'delivered': return <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-none px-2.5 py-1 rounded-md text-[10px] font-bold">LIVRÉ</Badge>;
+      case 'processing': return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-none px-2.5 py-1 rounded-md text-[10px] font-bold">EN COURS</Badge>;
+      case 'pending': return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-200 border-none px-2.5 py-1 rounded-md text-[10px] font-bold">ATTENTE</Badge>;
+      case 'shipped': return <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200 border-none px-2.5 py-1 rounded-md text-[10px] font-bold">EXPÉDIÉ</Badge>;
+      case 'cancelled': return <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-none px-2.5 py-1 rounded-md text-[10px] font-bold">ANNULÉ</Badge>;
+      default: return <Badge className="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md text-[10px] font-bold">{(status as string).toUpperCase()}</Badge>;
     }
   };
 
@@ -83,92 +83,92 @@ const Orders = () => {
   );
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-serif font-bold text-text-main tracking-tight">Flux de Commandes</h1>
-        <p className="text-text-dim text-[10px] uppercase tracking-widest font-bold mt-2">Suivez et gérez les acquisitions de vos clients en temps réel.</p>
+        <h1 className="text-2xl font-bold text-[#202124]">Commandes</h1>
+        <p className="text-gray-500 text-xs font-medium mt-1">Suivez les transactions et livraisons de vos clients.</p>
       </div>
 
       {/* Filters & Search */}
-      <div className="flex flex-col sm:flex-row gap-6">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
-            placeholder="Rechercher une acquisition (Nom ou ID)..."
+            placeholder="Rechercher une commande..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-12 bg-secondary/50 border-border text-text-main placeholder:text-text-dim/50 h-14 rounded-2xl focus:ring-accent-emerald font-medium text-xs"
+            className="pl-9 win-btn-secondary bg-white/60 h-10 border-gray-200"
           />
         </div>
-        <Button variant="outline" className="rounded-2xl h-14 border-border text-text-dim hover:bg-secondary/50 uppercase text-[10px] font-bold tracking-widest px-8">
-          <Filter className="w-4 h-4 mr-3" />
-          Filtres Avancés
+        <Button className="win-btn-secondary flex items-center justify-center gap-2 h-10 px-6">
+          <Filter className="w-4 h-4" />
+          <span>Filtres</span>
         </Button>
       </div>
 
       {/* Table */}
-      <div className="glass rounded-[2.5rem] shadow-2xl border border-glass-border overflow-hidden">
+      <div className="win-card overflow-hidden border-none shadow-sm">
         {loading ? (
-          <div className="py-32 flex flex-col items-center justify-center text-text-dim">
-            <Loader2 className="w-10 h-10 animate-spin mb-6 text-accent-emerald" />
-            <p className="uppercase text-[10px] font-bold tracking-widest">Synchronisation des commandes...</p>
+          <div className="py-24 flex flex-col items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin mb-4 text-[#0067c0]" />
+            <p className="text-xs font-medium text-gray-500">Synchronisation des commandes...</p>
           </div>
         ) : filteredOrders.length === 0 ? (
-          <div className="py-32 flex flex-col items-center justify-center text-text-dim">
-            <ShoppingCart className="w-16 h-16 mb-6 opacity-10" />
-            <p className="uppercase text-[10px] font-bold tracking-widest">Aucune commande trouvée</p>
+          <div className="py-24 flex flex-col items-center justify-center text-gray-400">
+            <ShoppingCart className="w-12 h-12 mb-4 opacity-20" />
+            <p className="text-xs font-semibold">Aucune commande trouvée</p>
           </div>
         ) : (
           <Table>
-            <TableHeader className="bg-accent-emerald/5">
-              <TableRow className="hover:bg-transparent border-glass-border h-16">
-                <TableHead className="font-bold text-accent-emerald uppercase text-[9px] tracking-widest pl-10">ID Commande</TableHead>
-                <TableHead className="font-bold text-accent-emerald uppercase text-[9px] tracking-widest">Client</TableHead>
-                <TableHead className="font-bold text-accent-emerald uppercase text-[9px] tracking-widest">Date</TableHead>
-                <TableHead className="font-bold text-accent-emerald uppercase text-[9px] tracking-widest">Montant</TableHead>
-                <TableHead className="font-bold text-accent-emerald uppercase text-[9px] tracking-widest">Statut</TableHead>
-                <TableHead className="text-right font-bold text-accent-emerald uppercase text-[9px] tracking-widest pr-10">Actions</TableHead>
+            <TableHeader className="bg-gray-50/50">
+              <TableRow className="hover:bg-transparent border-gray-100 h-12">
+                <TableHead className="text-[11px] font-bold text-gray-500 uppercase tracking-wider pl-6">ID</TableHead>
+                <TableHead className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Client</TableHead>
+                <TableHead className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Date</TableHead>
+                <TableHead className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Montant</TableHead>
+                <TableHead className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Statut</TableHead>
+                <TableHead className="text-right text-[11px] font-bold text-gray-500 uppercase tracking-wider pr-6">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredOrders.map((order) => (
-                <TableRow key={order.id} className="hover:bg-secondary/50 border-border transition-colors h-24">
-                  <TableCell className="font-bold text-accent-emerald uppercase text-[9px] tracking-widest pl-10">#{order.id.slice(0, 8).toUpperCase()}</TableCell>
+                <TableRow key={order.id} className="hover:bg-gray-50/50 border-gray-100 h-16 group transition-colors">
+                  <TableCell className="pl-6 font-bold text-[#0067c0] text-[11px]">#{order.id.slice(0, 8).toUpperCase()}</TableCell>
                   <TableCell>
                     <div>
-                      <p className="font-bold text-text-main">{order.customerName}</p>
-                      <p className="text-[9px] text-text-dim uppercase tracking-widest font-bold mt-1">{order.customerEmail}</p>
+                      <p className="text-sm font-bold text-[#202124]">{order.customerName}</p>
+                      <p className="text-[10px] text-gray-500 font-medium">{order.customerEmail}</p>
                     </div>
                   </TableCell>
-                  <TableCell className="text-text-dim text-xs font-bold uppercase tracking-widest">
+                  <TableCell className="text-xs font-medium text-gray-500">
                     {order.createdAt ? format(parseISO(order.createdAt), 'dd MMM yyyy, HH:mm', { locale: fr }) : 'N/A'}
                   </TableCell>
-                  <TableCell className="font-bold text-text-main">{order.totalAmount.toLocaleString()} Fc</TableCell>
+                  <TableCell className="text-sm font-bold text-[#202124]">{order.totalAmount.toLocaleString()} Fc</TableCell>
                   <TableCell>{getStatusBadge(order.status)}</TableCell>
-                  <TableCell className="text-right pr-10">
+                  <TableCell className="text-right pr-6">
                     <DropdownMenu>
                       <DropdownMenuTrigger
                         render={
-                          <Button variant="ghost" size="icon" className="rounded-xl hover:bg-secondary/50 text-text-dim h-10 w-10">
-                            <MoreVertical className="w-5 h-5" />
+                          <Button variant="ghost" size="icon" className="w-8 h-8 rounded-md hover:bg-gray-100">
+                            <MoreVertical className="w-4 h-4" />
                           </Button>
                         }
                       />
-                      <DropdownMenuContent align="end" className="glass border-glass-border text-text-main rounded-2xl p-2 min-w-[180px]">
-                        <DropdownMenuItem className="cursor-pointer hover:bg-white/10 rounded-xl px-4 py-3 uppercase text-[9px] font-bold tracking-widest">
-                          <Eye className="w-4 h-4 mr-3 text-accent-emerald" /> Détails
+                      <DropdownMenuContent align="end" className="acrylic border border-white/40 rounded-lg p-1 min-w-[160px]">
+                        <DropdownMenuItem className="cursor-pointer hover:bg-white/40 rounded-md px-3 py-2 text-[11px] font-semibold">
+                          <Eye className="w-3.5 h-3.5 mr-2 text-gray-500" /> Détails
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => updateOrderStatus(order.id, 'processing')} className="cursor-pointer hover:bg-white/10 rounded-xl px-4 py-3 uppercase text-[9px] font-bold tracking-widest">
-                          <Clock className="w-4 h-4 mr-3 text-accent-emerald" /> En cours
+                        <DropdownMenuItem onClick={() => updateOrderStatus(order.id, 'processing')} className="cursor-pointer hover:bg-white/40 rounded-md px-3 py-2 text-[11px] font-semibold">
+                          <Clock className="w-3.5 h-3.5 mr-2 text-blue-500" /> En cours
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => updateOrderStatus(order.id, 'shipped')} className="cursor-pointer hover:bg-white/10 rounded-xl px-4 py-3 uppercase text-[9px] font-bold tracking-widest">
-                          <Truck className="w-4 h-4 mr-3 text-accent-emerald" /> Expédier
+                        <DropdownMenuItem onClick={() => updateOrderStatus(order.id, 'shipped')} className="cursor-pointer hover:bg-white/40 rounded-md px-3 py-2 text-[11px] font-semibold">
+                          <Truck className="w-3.5 h-3.5 mr-2 text-purple-500" /> Expédier
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => updateOrderStatus(order.id, 'delivered')} className="cursor-pointer text-green-500 focus:text-green-500 hover:bg-green-500/10 rounded-xl px-4 py-3 uppercase text-[9px] font-bold tracking-widest">
-                          <CheckCircle2 className="w-4 h-4 mr-3" /> Livrer
+                        <DropdownMenuItem onClick={() => updateOrderStatus(order.id, 'delivered')} className="cursor-pointer text-green-600 hover:bg-green-50/50 rounded-md px-3 py-2 text-[11px] font-semibold">
+                          <CheckCircle2 className="w-3.5 h-3.5 mr-2" /> Livrer
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => updateOrderStatus(order.id, 'cancelled')} className="cursor-pointer text-red-500 focus:text-red-500 hover:bg-red-500/10 rounded-xl px-4 py-3 uppercase text-[9px] font-bold tracking-widest">
-                          <XCircle className="w-4 h-4 mr-3" /> Annuler
+                        <DropdownMenuItem onClick={() => updateOrderStatus(order.id, 'cancelled')} className="cursor-pointer text-red-600 hover:bg-red-50/50 rounded-md px-3 py-2 text-[11px] font-semibold">
+                          <XCircle className="w-3.5 h-3.5 mr-2" /> Annuler
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

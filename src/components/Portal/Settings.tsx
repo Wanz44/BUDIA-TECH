@@ -47,54 +47,52 @@ const Settings = () => {
   };
 
   return (
-    <div className="space-y-10">
-      <div className="flex justify-between items-end">
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-text-main tracking-tight">Configuration</h1>
-          <p className="text-text-dim text-[10px] uppercase tracking-widest font-bold mt-2">Personnalisez votre interface et gérez vos préférences BUDIA TECH.</p>
+          <h1 className="text-2xl font-bold text-[#202124]">Paramètres</h1>
+          <p className="text-gray-500 text-xs font-medium mt-1">Personnalisez l'identité visuelle de votre portail.</p>
         </div>
-        <Button onClick={handleSave} className="btn-glass h-12 px-8 rounded-xl uppercase font-bold tracking-widest text-[10px] gap-3">
-          <Save className="w-4 h-4" /> Enregistrer
+        <Button onClick={handleSave} className="win-btn-primary h-10 px-6 gap-2">
+          <Save className="w-4 h-4" /> <span>Enregistrer</span>
         </Button>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2 space-y-10">
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="space-y-6">
           {/* Identity Section */}
-          <Card className="glass border-glass-border shadow-xl rounded-[2.5rem] overflow-hidden">
-            <CardHeader className="p-10 pb-0">
-              <div className="flex items-center space-x-4">
-                <div className="bg-accent-emerald/10 p-3 rounded-2xl text-accent-emerald">
-                  <Type className="w-5 h-5" />
-                </div>
-                <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Identité de Marque</CardTitle>
+          <Card className="win-card border-none shadow-sm">
+            <CardHeader className="flex flex-row items-center gap-3 p-6 pb-2">
+              <div className="bg-[#0067c0]/10 p-2 rounded-md text-[#0067c0]">
+                <Type className="w-5 h-5" />
               </div>
+              <CardTitle className="text-xs font-bold text-gray-400 uppercase tracking-wider">Identité</CardTitle>
             </CardHeader>
-            <CardContent className="p-10 space-y-8">
-              <div className="grid sm:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <Label className="text-[9px] font-bold text-accent-emerald uppercase tracking-widest ml-1">Nom du Magasin</Label>
+            <CardContent className="p-6 space-y-4">
+              <div className="grid gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] font-semibold text-gray-500 ml-0.5">Nom de l'entreprise</Label>
                   <Input 
                     value={config.companyName} 
                     onChange={(e) => setConfig({ ...config, companyName: e.target.value })}
-                    className="bg-secondary/50 border-border text-text-main rounded-xl h-12" 
+                    className="win-btn-secondary bg-white/50 h-9" 
                   />
                 </div>
-                <div className="space-y-3">
-                  <Label className="text-[9px] font-bold text-accent-emerald uppercase tracking-widest ml-1">Slogan / Sous-titre</Label>
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] font-semibold text-gray-500 ml-0.5">Slogan</Label>
                   <Input 
                     value={config.description} 
                     onChange={(e) => setConfig({ ...config, description: e.target.value })}
-                    className="bg-secondary/50 border-border text-text-main rounded-xl h-12" 
+                    className="win-btn-secondary bg-white/50 h-9" 
                   />
                 </div>
-                <div className="space-y-3 sm:col-span-2">
-                  <Label className="text-[9px] font-bold text-accent-emerald uppercase tracking-widest ml-1">URL du Logo (Image)</Label>
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] font-semibold text-gray-500 ml-0.5">URL du Logo</Label>
                   <Input 
                     placeholder="https://example.com/logo.png"
                     value={config.logoUrl} 
                     onChange={(e) => setConfig({ ...config, logoUrl: e.target.value })}
-                    className="bg-secondary/50 border-border text-text-main rounded-xl h-12" 
+                    className="win-btn-secondary bg-white/50 h-9" 
                   />
                 </div>
               </div>
@@ -102,48 +100,46 @@ const Settings = () => {
           </Card>
 
           {/* Backgrounds Section */}
-          <Card className="glass border-glass-border shadow-xl rounded-[2.5rem] overflow-hidden">
-            <CardHeader className="p-10 pb-0">
-              <div className="flex items-center space-x-4">
-                <div className="bg-accent-blue/10 p-3 rounded-2xl text-accent-blue">
-                  <ImageIcon className="w-5 h-5" />
-                </div>
-                <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Actifs Visuels</CardTitle>
+          <Card className="win-card border-none shadow-sm">
+            <CardHeader className="flex flex-row items-center gap-3 p-6 pb-2">
+              <div className="bg-blue-500/10 p-2 rounded-md text-blue-600">
+                <ImageIcon className="w-5 h-5" />
               </div>
+              <CardTitle className="text-xs font-bold text-gray-400 uppercase tracking-wider">Design du site</CardTitle>
             </CardHeader>
-            <CardContent className="p-10 space-y-8">
-              <div className="space-y-4">
-                <Label className="text-[9px] font-bold text-accent-blue uppercase tracking-widest ml-1">Arrière-plan Section Hero</Label>
-                <div className="flex gap-4 items-center">
+            <CardContent className="p-6 space-y-4">
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-semibold text-gray-500 ml-0.5">Image Section Hero</Label>
+                <div className="flex gap-2">
                   <Input 
-                    placeholder="URL de l'image de fond principale" 
+                    placeholder="URL de l'image" 
                     value={config.heroBgUrl}
                     onChange={(e) => setConfig({ ...config, heroBgUrl: e.target.value })}
-                    className="bg-secondary/50 border-border text-text-main rounded-xl h-12 flex-1" 
+                    className="win-btn-secondary bg-white/50 h-9 flex-1" 
                   />
                   {config.heroBgUrl && (
-                    <div className="w-12 h-12 rounded-xl border border-border overflow-hidden shrink-0">
+                    <div className="w-9 h-9 rounded-md border border-gray-200 overflow-hidden shrink-0">
                       <img src={config.heroBgUrl} alt="Preview" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <Label className="text-[9px] font-bold text-accent-blue uppercase tracking-widest ml-1">Style d'arrière-plan du site</Label>
-                <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-semibold text-gray-500 ml-0.5">Style d'arrière-plan</Label>
+                <div className="grid grid-cols-3 gap-2">
                   {[
-                    { id: 'grid', label: 'Grille Tech' },
+                    { id: 'grid', label: 'Grille' },
                     { id: 'solid', label: 'Uni' },
-                    { id: 'custom', label: 'Image Perso' },
+                    { id: 'custom', label: 'Image' },
                   ].map((style) => (
                     <button
                       key={style.id}
                       onClick={() => setConfig({ ...config, siteBgType: style.id })}
-                      className={`h-12 rounded-xl text-[10px] font-bold uppercase tracking-widest border transition-all ${
+                      className={`h-9 rounded-md text-[11px] font-semibold border transition-all ${
                         config.siteBgType === style.id 
-                          ? 'bg-accent-blue border-accent-blue text-white' 
-                          : 'bg-secondary/30 border-border text-text-dim hover:border-accent-blue/50'
+                          ? 'bg-[#0067c0] border-[#0067c0] text-white' 
+                          : 'win-btn-secondary bg-white/50 border-gray-200 text-gray-600 hover:border-[#0067c0]/50'
                       }`}
                     >
                       {style.label}
@@ -153,13 +149,13 @@ const Settings = () => {
               </div>
 
               {config.siteBgType === 'custom' && (
-                <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
-                  <Label className="text-[9px] font-bold text-accent-blue uppercase tracking-widest ml-1">URL de l'image d'arrière-plan globale</Label>
+                <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2">
+                  <Label className="text-[11px] font-semibold text-gray-500 ml-0.5">URL Image Arrière-plan</Label>
                   <Input 
                     value={config.customBgUrl}
                     onChange={(e) => setConfig({ ...config, customBgUrl: e.target.value })}
-                    placeholder="https://images.unsplash.com/..." 
-                    className="bg-secondary/50 border-border text-text-main rounded-xl h-12" 
+                    placeholder="https://..." 
+                    className="win-btn-secondary bg-white/50 h-9" 
                   />
                 </div>
               )}
@@ -168,24 +164,22 @@ const Settings = () => {
         </div>
 
         {/* Info Section */}
-        <div className="space-y-10">
-          <Card className="glass border-glass-border shadow-xl rounded-[2.5rem] overflow-hidden">
-            <CardHeader className="p-10 pb-0">
-              <div className="flex items-center space-x-4">
-                <div className="bg-accent-emerald/10 p-3 rounded-2xl text-accent-emerald">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <CardTitle className="text-[11px] font-bold text-text-main uppercase tracking-widest">Coordonnées</CardTitle>
+        <div className="space-y-6">
+          <Card className="win-card border-none shadow-sm">
+            <CardHeader className="flex flex-row items-center gap-3 p-6 pb-2">
+              <div className="bg-green-500/10 p-2 rounded-md text-green-600">
+                <FileText className="w-5 h-5" />
               </div>
+              <CardTitle className="text-xs font-bold text-gray-400 uppercase tracking-wider">Informations Légales</CardTitle>
             </CardHeader>
-            <CardContent className="p-10 space-y-6">
-              <div className="space-y-3">
-                <Label className="text-[9px] font-bold text-accent-emerald uppercase tracking-widest ml-1">RCCM</Label>
-                <Input defaultValue="CD/KNG/RCCM/26-A-01430" className="bg-secondary/50 border-border text-text-main rounded-xl h-12" />
+            <CardContent className="p-6 space-y-4">
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-semibold text-gray-500 ml-0.5">RCCM</Label>
+                <Input defaultValue="CD/KNG/RCCM/26-A-01430" className="win-btn-secondary bg-white/50 h-9" />
               </div>
-              <div className="space-y-3">
-                <Label className="text-[9px] font-bold text-accent-emerald uppercase tracking-widest ml-1">Localisation</Label>
-                <Input defaultValue="Kinshasa, DRC" className="bg-secondary/50 border-border text-text-main rounded-xl h-12" />
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-semibold text-gray-500 ml-0.5">Localisation</Label>
+                <Input defaultValue="Kinshasa, DRC" className="win-btn-secondary bg-white/50 h-9" />
               </div>
             </CardContent>
           </Card>

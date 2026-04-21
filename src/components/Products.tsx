@@ -15,27 +15,43 @@ const Products = () => {
     },
     {
       id: '2',
-      name: 'Système Vidéo 8K',
+      name: 'Caméra Surveillance 4K',
       category: 'Sécurité',
-      price: 1299,
+      price: 450,
       image: 'https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&q=80&w=600',
       badge: 'Premium'
     },
     {
       id: '3',
-      name: 'Station de Travail Pro',
+      name: 'Unité Centrale Gamer i9',
       category: 'Ordinateurs',
-      price: 4599,
+      price: 2599,
       image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=600',
       badge: 'Sur Mesure'
     },
     {
       id: '4',
-      name: 'iPad Pro OLED',
-      category: 'Tablettes',
-      price: 1899,
-      image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&q=80&w=600',
-      badge: 'Elite'
+      name: 'Imprimante Laser Pro',
+      category: 'Bureautique',
+      price: 899,
+      image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=600',
+      badge: 'Performance'
+    },
+    {
+      id: '5',
+      name: 'Câble Réseau Cat7 20m',
+      category: 'Réseau',
+      price: 45,
+      image: 'https://images.unsplash.com/photo-1515243105021-39f282434057?auto=format&fit=crop&q=80&w=600',
+      badge: 'Indispensable'
+    },
+    {
+      id: '6',
+      name: 'Kit Puces Électroniques',
+      category: 'Composants',
+      price: 120,
+      image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600',
+      badge: 'Technique'
     }
   ];
 
