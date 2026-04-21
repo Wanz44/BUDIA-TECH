@@ -22,77 +22,80 @@ const Hero = () => {
   }, []);
 
   return (
-    <section id="home" className="relative h-screen min-h-[700px] flex items-center overflow-hidden bg-bg-deep text-text-main transition-colors duration-200">
+    <section id="home" className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden bg-bg-deep text-on-surface transition-colors duration-200">
       <div className="container mx-auto px-6 relative z-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="flex items-center gap-2 mb-6">
-              <span className="text-xs font-semibold text-accent-blue tracking-wide uppercase">
-                Expertise & Innovation
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-xs font-bold uppercase tracking-widest mb-8">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
               </span>
-              <div className="h-[1px] w-12 bg-accent-blue/30" />
+              L'Elite Technique
             </div>
             
-            <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight mb-8">
-              {config.companyName.split(' ')[0]} <span className="text-accent-blue">{config.companyName.split(' ')[1] || 'TECH'}</span>
+            <h1 className="text-5xl lg:text-8xl font-bold leading-[1.1] tracking-tight mb-8 text-on-surface">
+              {config.companyName.split(' ')[0]} <span className="text-primary">{config.companyName.split(' ')[1] || 'TECH'}</span>
             </h1>
             
-            <p className="text-xl text-text-dim font-normal leading-relaxed mb-12 max-w-lg">
-              {config.description || "Nous redéfinissons les standards de l'ingénierie numérique pour forger l'avenir de votre infrastructure technologique."}
+            <p className="text-lg lg:text-2xl text-text-dim font-medium leading-relaxed mb-12 max-w-xl">
+              {config.description || "Nous redéfinissons les standards de l'ingénierie numérique pour forger l'avenir de votre infrastructure."}
             </p>
             
-            <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="bg-accent-blue text-white hover:bg-accent-blue/90 px-10 h-14 rounded-md text-sm font-semibold transition-all">
-                Démarrer votre projet
+            <div className="flex flex-wrap gap-4 items-center">
+              <Button size="lg" className="btn-primary h-14 px-10 text-sm shadow-lg shadow-primary/20">
+                Démarrer un projet
               </Button>
-              <Button size="lg" variant="outline" className="border-border text-text-main hover:bg-secondary px-10 h-14 rounded-md text-sm font-semibold">
-                Nos expertises
+              <Button size="lg" className="btn-tonal h-14 px-10 text-sm">
+                En savoir plus
               </Button>
             </div>
           </motion.div>
           
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="hidden lg:block relative"
+            className="relative hidden lg:block"
           >
-            <div className="relative z-10 glass-card p-1 bg-white dark:bg-[#2b2a29] shadow-2xl rounded-lg overflow-hidden">
+            <div className="relative z-10 p-4 bg-surface-container rounded-[3rem] overflow-hidden rotate-2 hover:rotate-0 transition-transform duration-700">
               <img
                 src={config.heroBgUrl || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2000"}
-                alt="Technology Visualization"
-                className="w-full aspect-[4/3] object-cover rounded-md"
+                alt="Technology Visual"
+                className="w-full aspect-square object-cover rounded-[2.5rem]"
                 referrerPolicy="no-referrer"
               />
             </div>
             
-            {/* Subtle floating accent card */}
+            {/* MD3 Floating elements */}
             <motion.div 
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -bottom-6 -left-6 glass shadow-xl p-6 rounded-lg max-w-[200px] z-20"
+              animate={{ y: [0, -20, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-8 -left-8 bg-accent p-8 rounded-[2.5rem] shadow-xl z-20 flex flex-col items-center gap-2 max-w-[150px] border-4 border-white"
             >
-              <Shield className="w-8 h-8 text-accent-emerald mb-3" />
-              <h3 className="text-sm font-bold mb-1 uppercase tracking-tighter">Sécurité</h3>
-              <p className="text-[11px] text-text-dim font-medium">Standards institutionnels et cryptage avancé.</p>
+              <Shield className="w-10 h-10 text-primary" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-center">Sécurité Totale</span>
             </motion.div>
 
             <motion.div 
-              animate={{ y: [0, 10, 0] }}
+              animate={{ y: [0, 20, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute -top-6 -right-6 glass shadow-xl p-6 rounded-lg max-w-[200px] z-20"
+              className="absolute -top-12 -right-12 bg-secondary p-8 rounded-full shadow-xl z-20 flex flex-col items-center gap-2 w-40 h-40 border-4 border-white justify-center"
             >
-              <Globe className="w-8 h-8 text-accent-blue mb-3" />
-              <h3 className="text-sm font-bold mb-1 uppercase tracking-tighter">Impact</h3>
-              <p className="text-[11px] text-text-dim font-medium">Connectivité globale sans frontières.</p>
+              <Globe className="w-10 h-10 text-primary" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-center">Impact Global</span>
             </motion.div>
           </motion.div>
         </div>
       </div>
+      
+      {/* MD3 Decorative elements */}
+      <div className="absolute top-1/4 -right-20 w-80 h-80 bg-primary/5 rounded-full blur-3xl -z-10" />
+      <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-accent/30 rounded-full blur-3xl -z-10" />
     </section>
   );
 };

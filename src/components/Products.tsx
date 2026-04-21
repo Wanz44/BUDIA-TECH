@@ -40,36 +40,36 @@ const Products = () => {
   ];
 
   return (
-    <section id="products" className="py-32 bg-bg-deep dark:bg-[#201f1e] transition-colors duration-200">
+    <section id="products" className="py-24 bg-surface-container/30 transition-colors duration-200">
       <div className="container mx-auto px-6">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-20 gap-8">
           <div className="max-w-2xl">
-            <span className="text-xs font-bold uppercase tracking-widest text-accent-blue mb-4 block">Sélection Exclusive</span>
-            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-text-main">
-              Équipements de <span className="text-accent-blue">classe mondiale</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-primary mb-4 block">Sélection Exclusive</span>
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-on-surface">
+              Équipements de <span className="text-primary">haute précision</span>
             </h2>
             <p className="text-lg text-text-dim leading-relaxed">
-              Une gamme rigoureusement sélectionnée pour répondre aux besoins des professionnels les plus exigeants.
+              Une gamme rigoureusement sélectionnée pour répondre aux besoins des professionnels.
             </p>
           </div>
-          <Button variant="outline" className="border-border text-xs font-bold uppercase tracking-widest px-8 h-12 rounded-md hover:bg-secondary">
-            Tout le catalogue
+          <Button className="btn-tonal text-xs font-bold uppercase px-8 h-12 shadow-none border-none">
+            Voir le catalogue
           </Button>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
           {products.map((product, index) => (
             <motion.div
               key={product.id}
-              initial={{ opacity: 0, scale: 0.98 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.05 }}
-              className="group"
+              transition={{ delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="group flex flex-col h-full"
             >
-              <div className="relative mb-6 overflow-hidden bg-secondary rounded-md transition-all shadow-sm group-hover:shadow-md border border-border">
+              <div className="relative mb-8 overflow-hidden bg-white rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-border/50">
                 <div className="absolute top-4 left-4 z-10">
-                  <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 bg-accent-blue text-white rounded-sm">
+                  <span className="chip bg-white/90 backdrop-blur-sm shadow-sm border-none py-2 px-4 rounded-2xl">
                     {product.badge}
                   </span>
                 </div>
@@ -77,25 +77,25 @@ const Products = () => {
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full aspect-[3/4] object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
                 
-                <div className="absolute bottom-4 left-4 right-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                   <Button className="w-full bg-white text-black hover:bg-white/90 rounded-md h-10 text-xs font-bold shadow-lg">
-                     Détails du produit
+                <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                   <Button className="btn-primary scale-90 group-hover:scale-100 transition-transform shadow-xl">
+                      Détails
                    </Button>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <span className="text-[10px] font-semibold text-accent-blue uppercase tracking-wider">{product.category}</span>
-                <h3 className="text-lg font-bold tracking-tight text-text-main group-hover:text-accent-blue transition-colors">{product.name}</h3>
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-xl font-bold text-text-main">{product.price.toLocaleString()} Fc</span>
-                  <div className="flex items-center text-accent-blue">
-                    <Star className="w-3 h-3 fill-current mr-1" />
-                    <span className="text-xs font-bold">5.0</span>
+              <div className="space-y-2 px-2">
+                <span className="text-xs font-bold text-primary uppercase tracking-widest">{product.category}</span>
+                <h3 className="text-xl font-bold tracking-tight text-on-surface hover:text-primary transition-colors cursor-pointer">{product.name}</h3>
+                <div className="flex items-center justify-between pt-4">
+                  <span className="text-2xl font-bold text-on-surface">{product.price.toLocaleString()} Fc</span>
+                  <div className="flex items-center text-accent-yellow">
+                    <Star className="w-4 h-4 fill-current mr-1" />
+                    <span className="text-sm font-bold text-text-dim">5.0</span>
                   </div>
                 </div>
               </div>

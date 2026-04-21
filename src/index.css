@@ -3,61 +3,68 @@
 @import "shadcn/tailwind.css";
 
 @theme inline {
-    --font-heading: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-    --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-heading: "Product Sans", "Inter", system-ui, -apple-system, sans-serif;
+    --font-sans: "Inter", system-ui, -apple-system, sans-serif;
     
     --color-bg-deep: var(--bg-color);
-    --color-glass-bg: var(--glass-bg);
-    --color-glass-border: var(--glass-border);
-    --color-accent-emerald: #107c10; /* Microsoft Green */
-    --color-accent-blue: #0078d4; /* Microsoft Blue */
-    --color-accent-silver: #a1a1a1;
-    --color-accent-red: #d83b01; /* Microsoft Red/Orange */
+    --color-surface: var(--surface);
+    --color-on-surface: var(--on-surface);
+    --color-primary: var(--primary);
+    --color-on-primary: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-tertiary: #188038; /* MD3 Green */
+    --color-error: #b3261e;
+    
+    --color-accent-blue: #1a73e8; /* Google Blue */
+    --color-accent-yellow: #fbbc04;
+    --color-accent-red: #ea4335;
+    --color-accent-green: #34a853;
+    
     --color-text-main: var(--text-main);
     --color-text-dim: var(--text-dim);
-    --color-text-outline: var(--text-outline);
     --color-border: var(--border);
     --color-card: var(--card);
-    --color-secondary: var(--secondary);
-    --color-ring: #0078d4;
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-ring: #1a73e8;
 }
 
 :root {
     --bg-color: #ffffff;
-    --text-main: #323130;
-    --text-dim: #605e5d;
-    --text-outline: #323130;
-    --glass-bg: rgba(255, 255, 255, 0.8);
-    --glass-border: rgba(0, 0, 0, 0.1);
+    --surface: #f8f9fa;
+    --on-surface: #202124;
+    --text-main: #202124;
+    --text-dim: #5f6368;
     
     --background: #ffffff;
-    --foreground: #323130;
+    --foreground: #202124;
     --card: #ffffff;
-    --card-foreground: #323130;
+    --card-foreground: #202124;
     --popover: #ffffff;
-    --popover-foreground: #323130;
-    --primary: #0078d4;
+    --popover-foreground: #202124;
+    --primary: #1a73e8;
     --primary-foreground: #ffffff;
-    --secondary: #f3f2f1;
-    --secondary-foreground: #323130;
-    --muted: #f3f2f1;
-    --muted-foreground: #605e5d;
-    --accent: #f3f2f1;
-    --accent-foreground: #0078d4;
-    --destructive: #d83b01;
-    --border: #edebe9;
+    --secondary: #f1f3f4;
+    --secondary-foreground: #202124;
+    --muted: #f1f3f4;
+    --muted-foreground: #5f6368;
+    --accent: #e8f0fe;
+    --accent-foreground: #1a73e8;
+    --destructive: #ea4335;
+    --border: #dadce0;
     --input: #ffffff;
-    --ring: #0078d4;
-    --radius: 0.5rem; /* Microsoft uses smaller radius than 1.5rem */
+    --ring: #1a73e8;
+    --radius: 1.5rem; /* MD3 uses large rounded corners (24px+) */
 }
 
 @layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  
   * {
     @apply border-border outline-ring/50 transition-colors duration-200;
   }
   body {
     @apply bg-bg-deep text-text-main min-h-screen leading-relaxed antialiased;
-    background-image: none; /* Microsoft style is clean and flat or with very subtle acrylic */
   }
   html {
     @apply font-sans;
@@ -65,47 +72,19 @@
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-glass-bg border border-glass-border backdrop-blur-2xl;
+  .surface-container {
+    @apply bg-surface border border-border/50 rounded-[1.75rem] shadow-sm;
   }
-  .glass-card {
-    @apply bg-card border border-glass-border rounded-lg shadow-sm;
+  .md3-card {
+    @apply bg-card border border-border/60 rounded-[2rem] shadow-sm hover:shadow-md transition-shadow duration-300;
   }
-  .text-gradient {
-    @apply text-accent-blue; /* Microsoft doesn't use gradients for text much */
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-primary/90 active:scale-95 transition-all shadow-sm;
   }
-  .btn-glass {
-    @apply bg-accent-blue text-white shadow hover:bg-accent-blue/90 transition-all duration-200;
+  .btn-tonal {
+    @apply bg-accent text-accent-foreground px-6 py-3 rounded-full font-semibold hover:bg-accent/80 active:scale-95 transition-all;
   }
-  .font-serif {
-    font-family: inherit; /* Segoe UI used for titles too */
-  }
-
-  .font-outline-1 {
-    -webkit-text-stroke: 1px var(--text-outline);
-  }
-  .font-outline-2 {
-    -webkit-text-stroke: 1px var(--text-outline); /* Thinner for Microsoft look */
-  }
-  .writing-vertical-lr {
-    writing-mode: vertical-lr;
-  }
-
-  /* Custom scrollbar for a premium feel */
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: rgba(15, 23, 42, 0.15);
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(15, 23, 42, 0.3);
-    background-clip: padding-box;
+  .chip {
+    @apply inline-flex items-center px-4 py-1.5 rounded-lg border border-border text-sm font-medium text-text-dim hover:bg-secondary transition-colors;
   }
 }

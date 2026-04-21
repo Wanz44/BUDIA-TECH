@@ -42,40 +42,40 @@ const Services = () => {
   ];
 
   return (
-    <section id="services" className="py-32 bg-bg-deep text-text-main relative overflow-hidden transition-colors duration-200">
+    <section id="services" className="py-24 bg-surface text-on-surface relative overflow-hidden transition-colors duration-200">
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-3xl mb-16">
-          <span className="text-xs font-bold uppercase tracking-widest text-accent-blue mb-4 block">Expertise Technique</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-primary mb-4 block">Expertise Technique</span>
           <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-6">
-            Des services conçus pour <span className="text-accent-blue">votre transformation</span>
+            Des services conçus pour <span className="text-primary">votre ambition</span>
           </h2>
-          <p className="text-lg text-text-dim max-w-2xl leading-relaxed">
-            Nous concevons des architectures numériques robustes et élégantes, adaptées aux exigences des leaders de l'industrie.
+          <p className="text-lg lg:text-xl text-text-dim max-w-2xl leading-relaxed">
+            Nous concevons des architectures numériques robustes et élégantes, adaptées aux exigences des leaders.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
-              className="group glass-card p-10 hover:border-accent-blue/40 transition-all duration-300 flex flex-col h-full"
+              transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="group md3-card p-10 hover:bg-white transition-all duration-300 flex flex-col h-full hover:border-primary/20"
             >
-              <div className="mb-8 p-3 rounded-md bg-accent-blue/5 w-fit group-hover:bg-accent-blue/10 transition-colors">
-                <div className="text-accent-blue">
+              <div className="mb-8 p-6 rounded-3xl bg-secondary w-fit group-hover:bg-primary/5 group-hover:scale-110 transition-all duration-500">
+                <div className="text-primary">
                   {service.icon}
                 </div>
               </div>
-              <h4 className="text-lg font-bold mb-4 tracking-tight">{service.title}</h4>
-              <p className="text-text-dim text-sm leading-relaxed mb-8 font-normal flex-grow">
+              <h4 className="text-xl font-bold mb-4 tracking-tight group-hover:text-primary transition-colors">{service.title}</h4>
+              <p className="text-text-dim text-sm leading-relaxed mb-10 flex-grow">
                 {service.description}
               </p>
-              <div className="flex flex-wrap gap-2 border-t border-border pt-6 mt-auto">
+              <div className="flex flex-wrap gap-2 pt-6 border-t border-border/40">
                 {service.tags.map((tag, tIndex) => (
-                  <span key={tIndex} className="text-[10px] font-semibold uppercase tracking-wider text-accent-blue opacity-80">
+                  <span key={tIndex} className="chip">
                     {tag}
                   </span>
                 ))}
