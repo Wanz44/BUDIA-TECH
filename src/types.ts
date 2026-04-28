@@ -1,40 +1,77 @@
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  created_at: string;
+}
+
 export interface Product {
   id: string;
   name: string;
   description: string;
   price: number;
   stock: number;
-  category: string;
-  imageUrl: string;
+  category_id?: string;
+  image_url: string;
   images: string[];
-  createdAt: string;
-}
-
-export interface Service {
-  id: string;
-  name: string;
-  description: string;
-  priceRange: string;
-  category: string;
-  imageUrl: string;
+  badge?: string;
+  specifications?: any;
+  visible: boolean;
+  created_at: string;
+  updated_at: string;
+  category?: Category; // Joined category
 }
 
 export interface Order {
   id: string;
-  customerName: string;
-  customerEmail: string;
-  productIds: string[];
-  totalAmount: number;
+  customer_name: string;
+  customer_email: string;
+  customer_phone?: string;
+  total_amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  createdAt: string;
+  items?: any; // Optional JSON storage
+  created_at: string;
+  order_items?: OrderItem[]; // Joined items
 }
 
-export interface Contact {
+export interface OrderItem {
   id: string;
-  name: string;
+  order_id: string;
+  product_id: string;
+  quantity: number;
+  price_at_purchase: number;
+  product?: Product;
+}
+
+export interface Profile {
+  id: string;
   email: string;
-  subject: string;
+  full_name: string;
+  role: 'admin' | 'staff';
+  created_at: string;
+}
+
+export interface SiteConfig {
+  id: string;
+  company_name: string;
+  slogan?: string;
+  logo_url?: string;
+  hero_bg_url?: string;
+  site_bg_type: 'grid' | 'solid' | 'custom';
+  custom_bg_url?: string;
+  contact_email?: string;
+  contact_phone?: string;
+  rccm?: string;
+  address?: string;
+  updated_at: string;
+}
+
+export interface Notification {
+  id: string;
+  title: string;
   message: string;
-  type: 'contact' | 'quote';
-  createdAt: string;
+  type: 'success' | 'warning' | 'error' | 'info';
+  is_read: boolean;
+  created_at: string;
 }

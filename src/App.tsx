@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { CurrencyProvider } from './context/CurrencyContext';
 
 export default function App() {
-  const [siteBg, setSiteBg] = useState<any>({ siteBgType: 'grid', customBgUrl: '', companyName: 'BUDIA TECH', description: 'Elite High-Tech Solutions' });
+  const [siteBg, setSiteBg] = useState<any>({ siteBgType: 'grid', customBgUrl: '', companyName: 'BUDIA TECH', slogan: 'L\'excellence technologique au service de votre vision' });
 
   useEffect(() => {
     const fetchBgConfig = async () => {
@@ -24,7 +24,7 @@ export default function App() {
             siteBgType: data.site_bg_type,
             customBgUrl: data.custom_bg_url,
             companyName: data.company_name,
-            description: data.description
+            slogan: data.slogan
           });
         }
       } catch (error) {

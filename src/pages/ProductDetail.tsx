@@ -36,26 +36,19 @@ const ProductDetail = () => {
       try {
         const { data, error } = await supabase
           .from('products')
-          .select('*')
+          .select('*, categories(*)')
           .eq('id', id)
           .single();
 
         if (error) throw error;
 
         const mappedProduct: Product = {
-          id: data.id,
-          name: data.name,
-          description: data.description,
-          price: Number(data.price),
-          stock: data.stock,
-          category: data.category,
-          imageUrl: data.image_url,
-          images: data.images || [data.image_url],
-          createdAt: data.created_at
+          ...data,
+          category: data.categories
         };
 
         setProduct(mappedProduct);
-        setSelectedImage(mappedProduct.imageUrl || mappedProduct.images[0] || '');
+        setSelectedImage(mappedProduct.image_url || (mappedProduct.images && mappedProduct.images[0]) || '');
       } catch (error) {
         console.error('Error fetching product:', error);
         toast.error('Produit introuvable');
@@ -96,7 +89,7 @@ const ProductDetail = () => {
   }
 
   // Combine main image and additional images for the gallery
-  const allImages = Array.from(new Set([product.imageUrl, ...(product.images || [])])).filter(img => img && img.trim() !== '');
+  const allImages = Array.from(new Set([product.image_url, ...(product.images || [])])).filter(img => img && img.trim() !== '');
 
   return (
     <div className="min-h-screen bg-white pt-24 pb-20 selection:bg-[#0067c0]/20">
@@ -105,7 +98,7 @@ const ProductDetail = () => {
         <nav className="flex items-center space-x-2 text-[11px] text-gray-500 mb-8 overflow-x-auto whitespace-nowrap pb-2">
           <Link to="/" className="hover:text-[#0067c0] hover:underline transition-colors uppercase tracking-widest font-bold">ACCUEIL</Link>
           <ArrowRight className="w-3 h-3" />
-          <span className="hover:text-[#0067c0] hover:underline transition-colors uppercase tracking-widest font-bold cursor-pointer">{product.category}</span>
+          <span className="hover:text-[#0067c0] hover:underline transition-colors uppercase tracking-widest font-bold cursor-pointer">{product.category?.name || 'Général'}</span>
           <ArrowRight className="w-3 h-3" />
           <span className="text-gray-900 font-bold uppercase tracking-widest truncate">{product.name}</span>
         </nav>

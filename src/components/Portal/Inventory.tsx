@@ -36,19 +36,34 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { supabase } from '@/lib/supabase';
-import { Product } from '@/types';
+import { Product, Category } from '@/types';
 import { toast } from 'sonner';
 import { useCurrency } from '@/context/CurrencyContext';
 
 const Inventory = () => {
   const { formatPrice } = useCurrency();
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const handleEditProduct = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,7 +84,7 @@ const Inventory = () => {
         description: formData.get('description') as string,
         price: Number(formData.get('price')),
         stock: Number(formData.get('stock')),
-        category: formData.get('category') as string,
+        category_id: formData.get('category_id') as string,
         image_url: uploadedUrls.length > 0 ? uploadedUrls[0] : (formData.get('imageUrl') as string),
         images: uploadedUrls
       };
@@ -78,24 +93,6 @@ const Inventory = () => {
         .from('products')
         .update(updatedProduct)
         .eq('id', editingProduct.id);
-
-      // Fallback if images column doesn't exist
-      if (error && (error.message.includes('column "images" of relation "products" does not exist') || error.code === '42703')) {
-        console.warn('Falling back: images column missing during update.');
-        const fallbackProduct = { ...updatedProduct };
-        delete fallbackProduct.images;
-        
-        const retry = await supabase
-          .from('products')
-          .update(fallbackProduct)
-          .eq('id', editingProduct.id);
-          
-        error = retry.error;
-        
-        if (!error) {
-          toast.warning('Mis à jour, mais les images supplémentaires n\'ont pas été enregistrées. Veuillez mettre à jour votre base de données Supabase.');
-        }
-      }
 
       if (error) throw error;
       
@@ -122,6 +119,7 @@ const Inventory = () => {
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -170,21 +168,14 @@ const Inventory = () => {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select('*, categories(*)')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
       const mappedProducts: Product[] = (data || []).map(p => ({
-        id: p.id,
-        name: p.name,
-        description: p.description,
-        price: Number(p.price),
-        stock: p.stock,
-        category: p.category,
-        imageUrl: p.image_url,
-        images: p.images || [],
-        createdAt: p.created_at
+        ...p,
+        category: p.categories // Supabase join result
       }));
       
       setProducts(mappedProducts);
@@ -212,7 +203,7 @@ const Inventory = () => {
         description: formData.get('description') as string,
         price: Number(formData.get('price')),
         stock: Number(formData.get('stock')),
-        category: formData.get('category') as string,
+        category_id: formData.get('category_id') as string,
         image_url: uploadedUrls.length > 0 ? uploadedUrls[0] : (formData.get('imageUrl') as string),
         images: uploadedUrls
       };
@@ -222,28 +213,9 @@ const Inventory = () => {
         .insert([newProduct])
         .select();
 
-      // Fallback if images column doesn't exist
-      if (error && (error.message.includes('column "images" of relation "products" does not exist') || error.code === '42703')) {
-        console.warn('Falling back: images column missing. Please run the SQL schema update.');
-        const fallbackProduct = { ...newProduct };
-        delete fallbackProduct.images;
-        
-        const retry = await supabase
-          .from('products')
-          .insert([fallbackProduct])
-          .select();
-        
-        data = retry.data;
-        error = retry.error;
-        
-        if (!error) {
-          toast.warning('Produit ajouté, mais les images supplémentaires n\'ont pas été enregistrées. Veuillez mettre à jour votre base de données Supabase avec le nouveau schéma SQL.');
-        }
-      }
-
       if (error) {
         console.error('Supabase error detail:', error);
-        throw new Error(error.message || 'Erreur inconnue lors de l\'ajout');
+        throw new Error(error.message || 'Erreur inconnue lors de l\' ajout');
       }
       
       fetchProducts(); // Refresh list
@@ -279,7 +251,7 @@ const Inventory = () => {
 
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchTerm.toLowerCase())
+    p.category?.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -310,8 +282,18 @@ const Inventory = () => {
                   <Input id="name" name="name" required className="win-btn-secondary bg-white/50 h-9" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="category" className="text-[11px] font-semibold text-gray-500 ml-0.5">Catégorie</Label>
-                  <Input id="category" name="category" required className="win-btn-secondary bg-white/50 h-9" />
+                  <Label htmlFor="category_id" className="text-[11px] font-semibold text-gray-500 ml-0.5">Catégorie</Label>
+                  <select 
+                    id="category_id" 
+                    name="category_id" 
+                    required 
+                    className="win-btn-secondary bg-white/50 h-9 w-full px-3 text-sm rounded-md border border-gray-200"
+                  >
+                    <option value="">Sélectionner...</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
@@ -410,8 +392,18 @@ const Inventory = () => {
                   <Input id="edit-name" name="name" defaultValue={editingProduct?.name} required className="win-btn-secondary bg-white/50 h-9" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="edit-category" className="text-[11px] font-semibold text-gray-500 ml-0.5">Catégorie</Label>
-                  <Input id="edit-category" name="category" defaultValue={editingProduct?.category} required className="win-btn-secondary bg-white/50 h-9" />
+                  <Label htmlFor="edit-category_id" className="text-[11px] font-semibold text-gray-500 ml-0.5">Catégorie</Label>
+                  <select 
+                    id="edit-category_id" 
+                    name="category_id" 
+                    defaultValue={editingProduct?.category_id}
+                    required 
+                    className="win-btn-secondary bg-white/50 h-9 w-full px-3 text-sm rounded-md border border-gray-200"
+                  >
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
@@ -557,7 +549,9 @@ const Inventory = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md">{product.category}</span>
+                    <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md">
+                      {product.category?.name || 'Sans catégorie'}
+                    </span>
                   </TableCell>
                   <TableCell className="text-sm font-bold text-[#202124]">{formatPrice(product.price)}</TableCell>
                   <TableCell className="text-xs font-semibold text-gray-500">{product.stock} pcs</TableCell>

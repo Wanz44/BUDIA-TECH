@@ -12,7 +12,9 @@ import {
   Info,
   CheckCircle2,
   AlertTriangle,
-  Circle
+  Circle,
+  LogOut,
+  User
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/Input';
@@ -20,10 +22,12 @@ import Dashboard from '@/components/Portal/Dashboard';
 import Inventory from '@/components/Portal/Inventory';
 import Orders from '@/components/Portal/Orders';
 import SettingsView from '@/components/Portal/Settings';
+import Login from '@/components/Portal/Login';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'motion/react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { toast } from 'sonner';
 
 import { useCurrency } from '@/context/CurrencyContext';
 
@@ -32,8 +36,45 @@ const Portal = () => {
   const location = useLocation();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [session, setSession] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) fetchProfile(session.user.id);
+      setLoadingAuth(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session?.user) fetchProfile(session.user.id);
+      else setProfile(null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (data) setProfile(data);
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (!session) return;
+    
     const fetchNotifs = async () => {
       try {
         const { data, error } = await supabase
@@ -51,7 +92,31 @@ const Portal = () => {
     fetchNotifs();
     const interval = setInterval(fetchNotifs, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [session]);
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error('Erreur lors de la déconnexion');
+    } else {
+      toast.success('Déconnecté');
+    }
+  };
+
+  if (loadingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f3f3f3]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-[#0067c0]/20 border-t-[#0067c0] rounded-full animate-spin" />
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Initialisation sécurisée...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <Login onLoginSuccess={() => toast.success('Bienvenue, Administrateur')} />;
+  }
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -143,8 +208,25 @@ const Portal = () => {
             )}
           </button>
           
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0067c0] to-[#00b2ff] flex items-center justify-center text-white text-[10px] font-bold shadow-sm">
-            AL
+          <div className="flex items-center gap-2 pl-2 border-l border-gray-200 ml-2">
+            <div className="flex flex-col items-end hidden sm:flex">
+              <span className="text-[10px] font-black text-[#202124] leading-tight truncate max-w-[150px] uppercase">
+                {profile?.full_name || 'Administrateur'}
+              </span>
+              <span className="text-[9px] font-bold text-gray-500 leading-tight truncate max-w-[150px]">
+                {profile?.email || session?.user?.email}
+              </span>
+            </div>
+            <button 
+              onClick={handleLogout}
+              className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0067c0] to-[#00b2ff] flex items-center justify-center text-white text-[10px] font-bold shadow-sm hover:shadow-md hover:scale-105 transition-all group overflow-hidden"
+              title="Déconnexion"
+            >
+              <div className="group-hover:hidden flex items-center justify-center w-full h-full">
+                {profile?.full_name?.substring(0, 2).toUpperCase() || <User className="w-3.5 h-3.5" />}
+              </div>
+              <LogOut className="w-3.5 h-3.5 hidden group-hover:block" />
+            </button>
           </div>
         </div>
 

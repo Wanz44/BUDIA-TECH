@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase';
 const Hero = () => {
   const [config, setConfig] = useState<any>({
     companyName: 'BUDIA TECH',
-    description: 'L\'Elite Technique',
+    slogan: 'Votre partenaire technologique',
     heroBgUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2000'
   });
 
@@ -23,7 +23,7 @@ const Hero = () => {
         if (data) {
           setConfig({
             companyName: data.company_name,
-            description: data.description,
+            slogan: data.slogan,
             heroBgUrl: data.hero_bg_url
           });
         }
@@ -58,7 +58,7 @@ const Hero = () => {
             </h1>
             
             <p className="text-lg lg:text-2xl text-text-dim font-medium leading-relaxed mb-12 max-w-xl">
-              {config.description || "Nous redéfinissons les standards de l'ingénierie numérique pour forger l'avenir de votre infrastructure."}
+              {config.slogan || "Nous redéfinissons les standards de l'ingénierie numérique pour forger l'avenir de votre infrastructure."}
             </p>
             
             <div className="flex flex-wrap gap-4 items-center">

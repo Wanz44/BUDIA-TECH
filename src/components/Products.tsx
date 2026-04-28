@@ -21,21 +21,14 @@ const Products = ({ searchTerm = '' }: { searchTerm?: string }) => {
       try {
         const { data, error } = await supabase
           .from('products')
-          .select('*')
+          .select('*, categories(*)')
           .order('created_at', { ascending: false });
 
         if (error) throw error;
         
         const mappedProducts: Product[] = (data || []).map(p => ({
-          id: p.id,
-          name: p.name,
-          description: p.description,
-          price: Number(p.price),
-          stock: p.stock,
-          category: p.category,
-          imageUrl: p.image_url,
-          images: p.images || [],
-          createdAt: p.created_at
+          ...p,
+          category: p.categories
         }));
         
         setProducts(mappedProducts);
@@ -51,7 +44,7 @@ const Products = ({ searchTerm = '' }: { searchTerm?: string }) => {
 
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+    product.category?.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -91,12 +84,12 @@ const Products = ({ searchTerm = '' }: { searchTerm?: string }) => {
                   <div className="relative mb-8 overflow-hidden bg-white rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-border/50 aspect-square">
                     <div className="absolute top-4 left-4 z-10">
                       <span className="chip bg-white/90 backdrop-blur-sm shadow-sm border-none py-2 px-4 rounded-2xl">
-                        Elite
+                        {product.badge || 'Elite'}
                       </span>
                     </div>
                     
                     <img
-                      src={product.imageUrl}
+                      src={product.image_url}
                       alt={product.name}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       referrerPolicy="no-referrer"
@@ -110,7 +103,9 @@ const Products = ({ searchTerm = '' }: { searchTerm?: string }) => {
                   </div>
 
                   <div className="space-y-2 px-2">
-                    <span className="text-xs font-bold text-primary uppercase tracking-widest">{product.category}</span>
+                    <span className="text-xs font-bold text-primary uppercase tracking-widest">
+                      {product.category?.name || 'Général'}
+                    </span>
                     <h3 className="text-xl font-bold tracking-tight text-on-surface hover:text-primary transition-colors">{product.name}</h3>
                     <div className="flex items-center justify-between pt-4">
                       <span className="text-2xl font-bold text-on-surface">{formatPriceFC(product.price)}</span>

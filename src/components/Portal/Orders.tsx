@@ -48,22 +48,11 @@ const Orders = () => {
     try {
       const { data, error } = await supabase
         .from('orders')
-        .select('*')
+        .select('*, order_items(*, products(*))')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
-      const mappedOrders: Order[] = (data || []).map(o => ({
-        id: o.id,
-        customerName: o.customer_name,
-        customerEmail: o.customer_email,
-        totalAmount: Number(o.total_amount),
-        status: o.status,
-        createdAt: o.created_at,
-        productIds: [] // Supposons que c'est une relation ou JSON, mais on simplifie ici
-      }));
-      
-      setOrders(mappedOrders);
+      setOrders(data || []);
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast.error('Erreur de chargement des commandes');
@@ -100,7 +89,7 @@ const Orders = () => {
   };
 
   const filteredOrders = orders.filter(o => 
-    o.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    o.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     o.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -158,14 +147,14 @@ const Orders = () => {
                   <TableCell className="pl-6 font-bold text-[#0067c0] text-[11px]">#{order.id.slice(0, 8).toUpperCase()}</TableCell>
                   <TableCell>
                     <div>
-                      <p className="text-sm font-bold text-[#202124]">{order.customerName}</p>
-                      <p className="text-[10px] text-gray-500 font-medium">{order.customerEmail}</p>
+                      <p className="text-sm font-bold text-[#202124]">{order.customer_name}</p>
+                      <p className="text-[10px] text-gray-500 font-medium">{order.customer_email}</p>
                     </div>
                   </TableCell>
                   <TableCell className="text-xs font-medium text-gray-500">
-                    {order.createdAt ? format(parseISO(order.createdAt), 'dd MMM yyyy, HH:mm', { locale: fr }) : 'N/A'}
+                    {order.created_at ? format(parseISO(order.created_at), 'dd MMM yyyy, HH:mm', { locale: fr }) : 'N/A'}
                   </TableCell>
-                  <TableCell className="text-sm font-bold text-[#202124]">{order.totalAmount.toLocaleString()} Fc</TableCell>
+                  <TableCell className="text-sm font-bold text-[#202124]">{order.total_amount.toLocaleString()} Fc</TableCell>
                   <TableCell>{getStatusBadge(order.status)}</TableCell>
                   <TableCell className="text-right pr-6">
                     <DropdownMenu>
