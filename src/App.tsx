@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import Home from './pages/Home';
 import Portal from './pages/Portal';
+import ProductDetail from './pages/ProductDetail';
 import { supabase } from '@/lib/supabase';
 
 export default function App() {
@@ -58,6 +59,7 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/portal/*" element={<Portal />} />
         </Routes>
         <Toaster position="top-right" />

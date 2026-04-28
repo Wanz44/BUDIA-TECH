@@ -9,6 +9,7 @@ CREATE TABLE products (
   stock INTEGER DEFAULT 0,
   category TEXT,
   image_url TEXT,
+  images TEXT[] DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

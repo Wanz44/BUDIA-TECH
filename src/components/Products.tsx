@@ -1,59 +1,48 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { ShoppingCart, Eye, Star } from 'lucide-react';
+import { ShoppingCart, Eye, Star, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Link } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
+import { Product } from '@/types';
 
 const Products = ({ searchTerm = '' }: { searchTerm?: string }) => {
-  const products = [
-    {
-      id: '1',
-      name: 'MacBook Pro M3 Max',
-      category: 'Ordinateurs',
-      price: 3499,
-      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=600',
-      badge: 'Elite'
-    },
-    {
-      id: '2',
-      name: 'Caméra Surveillance 4K',
-      category: 'Sécurité',
-      price: 450,
-      image: 'https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&q=80&w=600',
-      badge: 'Premium'
-    },
-    {
-      id: '3',
-      name: 'Unité Centrale Gamer i9',
-      category: 'Ordinateurs',
-      price: 2599,
-      image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=600',
-      badge: 'Sur Mesure'
-    },
-    {
-      id: '4',
-      name: 'Imprimante Laser Pro',
-      category: 'Bureautique',
-      price: 899,
-      image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=600',
-      badge: 'Performance'
-    },
-    {
-      id: '5',
-      name: 'Câble Réseau Cat7 20m',
-      category: 'Réseau',
-      price: 45,
-      image: 'https://images.unsplash.com/photo-1515243105021-39f282434057?auto=format&fit=crop&q=80&w=600',
-      badge: 'Indispensable'
-    },
-    {
-      id: '6',
-      name: 'Kit Puces Électroniques',
-      category: 'Composants',
-      price: 120,
-      image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600',
-      badge: 'Technique'
-    }
-  ];
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        
+        const mappedProducts: Product[] = (data || []).map(p => ({
+          id: p.id,
+          name: p.name,
+          description: p.description,
+          price: Number(p.price),
+          stock: p.stock,
+          category: p.category,
+          imageUrl: p.image_url,
+          images: p.images || [],
+          createdAt: p.created_at
+        }));
+        
+        setProducts(mappedProducts);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -78,7 +67,11 @@ const Products = ({ searchTerm = '' }: { searchTerm?: string }) => {
           </Button>
         </div>
 
-        {filteredProducts.length > 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-10 h-10 animate-spin text-primary" />
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
             {filteredProducts.map((product, index) => (
               <motion.div
@@ -86,41 +79,43 @@ const Products = ({ searchTerm = '' }: { searchTerm?: string }) => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
                 className="group flex flex-col h-full"
               >
-                <div className="relative mb-8 overflow-hidden bg-white rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-border/50">
-                  <div className="absolute top-4 left-4 z-10">
-                    <span className="chip bg-white/90 backdrop-blur-sm shadow-sm border-none py-2 px-4 rounded-2xl">
-                      {product.badge}
-                    </span>
-                  </div>
-                  
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-110"
-                    referrerPolicy="no-referrer"
-                  />
-                  
-                  <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                     <Button className="btn-primary scale-90 group-hover:scale-100 transition-transform shadow-xl">
-                        Détails
-                     </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-2 px-2">
-                  <span className="text-xs font-bold text-primary uppercase tracking-widest">{product.category}</span>
-                  <h3 className="text-xl font-bold tracking-tight text-on-surface hover:text-primary transition-colors cursor-pointer">{product.name}</h3>
-                  <div className="flex items-center justify-between pt-4">
-                    <span className="text-2xl font-bold text-on-surface">{product.price.toLocaleString()} Fc</span>
-                    <div className="flex items-center text-accent-yellow">
-                      <Star className="w-4 h-4 fill-current mr-1" />
-                      <span className="text-sm font-bold text-text-dim">5.0</span>
+                <Link to={`/product/${product.id}`} className="block">
+                  <div className="relative mb-8 overflow-hidden bg-white rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-border/50 aspect-square">
+                    <div className="absolute top-4 left-4 z-10">
+                      <span className="chip bg-white/90 backdrop-blur-sm shadow-sm border-none py-2 px-4 rounded-2xl">
+                        Elite
+                      </span>
+                    </div>
+                    
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      referrerPolicy="no-referrer"
+                    />
+                    
+                    <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                       <Button className="btn-primary scale-90 group-hover:scale-100 transition-transform shadow-xl pointer-events-none">
+                          Détails
+                       </Button>
                     </div>
                   </div>
-                </div>
+
+                  <div className="space-y-2 px-2">
+                    <span className="text-xs font-bold text-primary uppercase tracking-widest">{product.category}</span>
+                    <h3 className="text-xl font-bold tracking-tight text-on-surface hover:text-primary transition-colors">{product.name}</h3>
+                    <div className="flex items-center justify-between pt-4">
+                      <span className="text-2xl font-bold text-on-surface">{product.price.toLocaleString()} Fc</span>
+                      <div className="flex items-center text-accent-yellow">
+                        <Star className="w-4 h-4 fill-current mr-1" />
+                        <span className="text-sm font-bold text-text-dim">5.0</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
               </motion.div>
             ))}
           </div>

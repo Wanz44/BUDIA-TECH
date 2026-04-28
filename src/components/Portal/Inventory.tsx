@@ -43,12 +43,102 @@ const Inventory = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  const handleEditProduct = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+    
+    setSubmitting(true);
+    const formData = new FormData(e.currentTarget);
+    
+    try {
+      let uploadedUrls: string[] = editingProduct.images || [];
+      if (selectedFiles.length > 0) {
+        const newUrls = await uploadImages(selectedFiles);
+        uploadedUrls = newUrls;
+      }
+
+      const updatedProduct = {
+        name: formData.get('name') as string,
+        description: formData.get('description') as string,
+        price: Number(formData.get('price')),
+        stock: Number(formData.get('stock')),
+        category: formData.get('category') as string,
+        image_url: uploadedUrls.length > 0 ? uploadedUrls[0] : (formData.get('imageUrl') as string),
+        images: uploadedUrls
+      };
+      
+      const { error } = await supabase
+        .from('products')
+        .update(updatedProduct)
+        .eq('id', editingProduct.id);
+
+      if (error) throw error;
+      
+      fetchProducts();
+      toast.success('Produit mis à jour');
+      setIsEditDialogOpen(false);
+      setEditingProduct(null);
+      setSelectedFiles([]);
+      setPreviewIndex(0);
+    } catch (error) {
+      console.error('Error updating product:', error);
+      toast.error('Erreur lors de la mise à jour');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const openEditDialog = (product: Product) => {
+    setEditingProduct(product);
+    setIsEditDialogOpen(true);
+    setSelectedFiles([]);
+    setPreviewIndex(0);
+  };
 
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewIndex, setPreviewIndex] = useState<number>(0);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files).slice(0, 4);
+      setSelectedFiles(files);
+      setPreviewIndex(0);
+    }
+  };
+
+  const uploadImages = async (files: File[]): Promise<string[]> => {
+    const urls: string[] = [];
+    for (const file of files) {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('products')
+        .upload(filePath, file);
+
+      if (error) {
+        console.error('Error uploading image:', error);
+        continue;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('products')
+        .getPublicUrl(filePath);
+
+      urls.push(publicUrl);
+    }
+    return urls;
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -68,6 +158,7 @@ const Inventory = () => {
         stock: p.stock,
         category: p.category,
         imageUrl: p.image_url,
+        images: p.images || [],
         createdAt: p.created_at
       }));
       
@@ -86,13 +177,19 @@ const Inventory = () => {
     const formData = new FormData(e.currentTarget);
     
     try {
+      let uploadedUrls: string[] = [];
+      if (selectedFiles.length > 0) {
+        uploadedUrls = await uploadImages(selectedFiles);
+      }
+
       const newProduct = {
         name: formData.get('name') as string,
         description: formData.get('description') as string,
         price: Number(formData.get('price')),
         stock: Number(formData.get('stock')),
         category: formData.get('category') as string,
-        image_url: formData.get('imageUrl') as string,
+        image_url: uploadedUrls.length > 0 ? uploadedUrls[0] : (formData.get('imageUrl') as string),
+        images: uploadedUrls
       };
       
       const { data, error } = await supabase
@@ -105,6 +202,8 @@ const Inventory = () => {
       fetchProducts(); // Refresh list
       toast.success('Produit ajouté avec succès');
       setIsAddDialogOpen(false);
+      setSelectedFiles([]);
+      setPreviewIndex(0);
     } catch (error) {
       console.error('Error adding product:', error);
       toast.error('Erreur lors de l\'ajout du produit');
@@ -179,8 +278,60 @@ const Inventory = () => {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="imageUrl" className="text-[11px] font-semibold text-gray-500 ml-0.5">Image URL</Label>
-                <Input id="imageUrl" name="imageUrl" className="win-btn-secondary bg-white/50 h-9" />
+                <Label htmlFor="images" className="text-[11px] font-semibold text-gray-500 ml-0.5">Images du produit (Max 4)</Label>
+                <div className="flex flex-col gap-2">
+                  <Input 
+                    id="images" 
+                    name="images" 
+                    type="file" 
+                    accept=".png,.jpeg,.jpg" 
+                    multiple 
+                    onChange={handleFileChange}
+                    className="win-btn-secondary bg-white/50 h-9 p-1 pt-1.5" 
+                  />
+                  {selectedFiles.length > 0 && (
+                    <div className="flex gap-4 mt-2 p-3 bg-gray-50/50 rounded-xl border border-gray-100">
+                      {/* Gallery Thumbnails */}
+                      <div className="flex flex-col gap-2 max-w-[64px]">
+                        {selectedFiles.map((file, idx) => (
+                          <button 
+                            key={idx}
+                            type="button"
+                            onClick={() => setPreviewIndex(idx)}
+                            className={`relative w-12 h-12 border rounded-lg overflow-hidden flex items-center justify-center transition-all ${
+                              previewIndex === idx ? 'border-[#0067c0] ring-2 ring-[#0067c0]/10 ring-inset' : 'border-gray-200 opacity-60 hover:opacity-100'
+                            }`}
+                          >
+                            <img 
+                              src={URL.createObjectURL(file)} 
+                              alt={`Preview ${idx}`} 
+                              className="w-full h-full object-cover" 
+                            />
+                            {previewIndex === idx && (
+                              <div className="absolute inset-0 bg-[#0067c0]/5 pointer-events-none" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Featured Preview */}
+                      <div className="flex-1 aspect-square bg-white border border-gray-200 rounded-xl overflow-hidden flex items-center justify-center relative group">
+                        <img 
+                          src={URL.createObjectURL(selectedFiles[previewIndex])} 
+                          alt="Main Preview" 
+                          className="w-full h-full object-contain p-2" 
+                        />
+                        <div className="absolute top-2 right-2 px-2 py-0.5 bg-black/5 rounded text-[9px] font-bold text-gray-500 uppercase">
+                          Apperçu {previewIndex + 1}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="imageUrl" className="text-[11px] font-semibold text-gray-500 ml-0.5">Ou URL de l'image principale</Label>
+                <Input id="imageUrl" name="imageUrl" placeholder="https://..." className="win-btn-secondary bg-white/50 h-9" />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="description" className="text-[11px] font-semibold text-gray-500 ml-0.5">Description</Label>
@@ -194,6 +345,98 @@ const Inventory = () => {
               <Button type="submit" disabled={submitting} className="w-full win-btn-primary h-11 mt-4">
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                 Valider l'ajout
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="sm:max-w-[500px] acrylic border border-white/40 rounded-xl text-[#202124] p-8 shadow-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-bold text-[#202124]">Modifier le produit</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleEditProduct} className="space-y-4 pt-4">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit-name" className="text-[11px] font-semibold text-gray-500 ml-0.5">Désignation</Label>
+                  <Input id="edit-name" name="name" defaultValue={editingProduct?.name} required className="win-btn-secondary bg-white/50 h-9" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit-category" className="text-[11px] font-semibold text-gray-500 ml-0.5">Catégorie</Label>
+                  <Input id="edit-category" name="category" defaultValue={editingProduct?.category} required className="win-btn-secondary bg-white/50 h-9" />
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit-price" className="text-[11px] font-semibold text-gray-500 ml-0.5">Prix (Fc)</Label>
+                  <Input id="edit-price" name="price" type="number" step="0.01" defaultValue={editingProduct?.price} required className="win-btn-secondary bg-white/50 h-9" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit-stock" className="text-[11px] font-semibold text-gray-500 ml-0.5">Stock</Label>
+                  <Input id="edit-stock" name="stock" type="number" defaultValue={editingProduct?.stock} required className="win-btn-secondary bg-white/50 h-9" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-images" className="text-[11px] font-semibold text-gray-500 ml-0.5">Nouvelles images (Remplace les anciennes, Max 4)</Label>
+                <div className="flex flex-col gap-2">
+                  <Input 
+                    id="edit-images" 
+                    name="images" 
+                    type="file" 
+                    accept=".png,.jpeg,.jpg" 
+                    multiple 
+                    onChange={handleFileChange}
+                    className="win-btn-secondary bg-white/50 h-9 p-1 pt-1.5" 
+                  />
+                  {selectedFiles.length > 0 ? (
+                    <div className="flex gap-4 mt-2 p-3 bg-gray-50/50 rounded-xl border border-gray-100">
+                      <div className="flex flex-col gap-2 max-w-[64px]">
+                        {selectedFiles.map((file, idx) => (
+                          <button 
+                            key={idx}
+                            type="button"
+                            onClick={() => setPreviewIndex(idx)}
+                            className={`relative w-12 h-12 border rounded-lg overflow-hidden flex items-center justify-center transition-all ${
+                              previewIndex === idx ? 'border-[#0067c0] ring-2 ring-[#0067c0]/10 ring-inset' : 'border-gray-200 opacity-60 hover:opacity-100'
+                            }`}
+                          >
+                            <img src={URL.createObjectURL(file)} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex-1 aspect-square bg-white border border-gray-200 rounded-xl overflow-hidden flex items-center justify-center relative">
+                        <img src={URL.createObjectURL(selectedFiles[previewIndex])} alt="Main Preview" className="w-full h-full object-contain p-2" />
+                      </div>
+                    </div>
+                  ) : editingProduct?.images && editingProduct.images.length > 0 ? (
+                    <div className="flex gap-2 mt-2">
+                      {editingProduct.images.map((url, idx) => (
+                        <div key={idx} className="w-10 h-10 border border-gray-200 rounded-md overflow-hidden bg-gray-50">
+                          <img src={url} alt={`Existing ${idx}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-imageUrl" className="text-[11px] font-semibold text-gray-500 ml-0.5">Ou URL de l'image principale</Label>
+                <Input id="edit-imageUrl" name="imageUrl" defaultValue={editingProduct?.imageUrl} placeholder="https://..." className="win-btn-secondary bg-white/50 h-9" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-description" className="text-[11px] font-semibold text-gray-500 ml-0.5">Description</Label>
+                <textarea
+                  id="edit-description"
+                  name="description"
+                  rows={2}
+                  defaultValue={editingProduct?.description}
+                  className="w-full win-btn-secondary bg-white/50 p-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#0067c0]"
+                />
+              </div>
+              <Button type="submit" disabled={submitting} className="w-full win-btn-primary h-11 mt-4">
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                Sauvegarder les modifications
               </Button>
             </form>
           </DialogContent>
@@ -290,7 +533,10 @@ const Inventory = () => {
                         }
                       />
                       <DropdownMenuContent align="end" className="acrylic border border-white/40 rounded-lg p-1 min-w-[140px]">
-                        <DropdownMenuItem className="cursor-pointer hover:bg-white/40 rounded-md px-3 py-2 text-[11px] font-semibold">
+                        <DropdownMenuItem 
+                          className="cursor-pointer hover:bg-white/40 rounded-md px-3 py-2 text-[11px] font-semibold"
+                          onClick={() => openEditDialog(product)}
+                        >
                           <Edit2 className="w-3.5 h-3.5 mr-2 text-[#0067c0]" /> Modifier
                         </DropdownMenuItem>
                         <DropdownMenuItem 
