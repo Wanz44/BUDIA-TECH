@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { mockDb } from '@/lib/mockDb';
+import { supabase } from '@/lib/supabase';
 
 const Contact = () => {
   const [loading, setLoading] = useState(false);
@@ -17,13 +17,16 @@ const Contact = () => {
     const formData = new FormData(e.currentTarget);
     
     try {
-      mockDb.add('contacts', {
+      const { error } = await supabase.from('contacts').insert([{
         name: formData.get('name'),
         email: formData.get('email'),
         subject: formData.get('subject') || (type === 'quote' ? 'Demande de Devis' : 'Contact'),
         message: formData.get('message'),
         type,
-      });
+      }]);
+
+      if (error) throw error;
+
       toast.success(type === 'quote' ? 'Votre demande de devis a été envoyée !' : 'Votre message a été envoyé !');
       (e.target as HTMLFormElement).reset();
     } catch (error) {

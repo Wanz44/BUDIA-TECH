@@ -35,7 +35,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { mockDb } from '@/lib/mockDb';
+import { supabase } from '@/lib/supabase';
 import { Product } from '@/types';
 import { toast } from 'sonner';
 
@@ -47,21 +47,38 @@ const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Initial load
-    const data = mockDb.getAll('products');
-    if (data.length === 0) {
-      // Seed with some initial data if empty
-      const initialProducts = [
-        { id: '1', name: 'MacBook Pro M3 Max', description: 'Le summum de la puissance Apple', price: 3500000, stock: 5, category: 'Ordinateurs', imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=200', createdAt: new Date().toISOString() },
-        { id: '2', name: 'iPhone 15 Pro', description: 'Titane de qualité spatiale', price: 1200000, stock: 12, category: 'Mobiles', imageUrl: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&q=80&w=200', createdAt: new Date().toISOString() }
-      ];
-      mockDb.collection('products').set(initialProducts);
-      setProducts(initialProducts);
-    } else {
-      setProducts(data);
-    }
-    setLoading(false);
+    fetchProducts();
   }, []);
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      const mappedProducts: Product[] = (data || []).map(p => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        price: Number(p.price),
+        stock: p.stock,
+        category: p.category,
+        imageUrl: p.image_url,
+        createdAt: p.created_at
+      }));
+      
+      setProducts(mappedProducts);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      toast.error('Erreur de connexion à Supabase');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddProduct = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,12 +92,17 @@ const Inventory = () => {
         price: Number(formData.get('price')),
         stock: Number(formData.get('stock')),
         category: formData.get('category') as string,
-        imageUrl: (formData.get('imageUrl') as string) || 'https://images.unsplash.com/photo-1588702547319-f0009307f154?auto=format&fit=crop&q=80&w=200',
+        image_url: formData.get('imageUrl') as string,
       };
       
-      const addedProduct = mockDb.add('products', newProduct);
-      setProducts(prev => [addedProduct, ...prev]);
+      const { data, error } = await supabase
+        .from('products')
+        .insert([newProduct])
+        .select();
+
+      if (error) throw error;
       
+      fetchProducts(); // Refresh list
       toast.success('Produit ajouté avec succès');
       setIsAddDialogOpen(false);
     } catch (error) {
@@ -94,7 +116,13 @@ const Inventory = () => {
   const handleDeleteProduct = async (id: string) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
       try {
-        mockDb.delete('products', id);
+        const { error } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw error;
+        
         setProducts(prev => prev.filter(p => p.id !== id));
         toast.success('Produit supprimé');
       } catch (error) {
@@ -218,14 +246,22 @@ const Inventory = () => {
                 <TableRow key={product.id} className="hover:bg-gray-50/50 border-gray-100 h-16 group">
                   <TableCell className="pl-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-md bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
-                        {product.imageUrl ? (
-                          <img src={product.imageUrl} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-300">
-                            <ImageIcon className="w-5 h-5" />
-                          </div>
-                        )}
+                      <div className="w-10 h-10 rounded-md bg-gray-50 flex-shrink-0 border border-gray-100 flex items-center justify-center overflow-hidden">
+                        {product.imageUrl && product.imageUrl.trim() !== '' ? (
+                          <img 
+                            src={product.imageUrl} 
+                            alt={product.name} 
+                            className="w-full h-full object-cover" 
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                              (e.target as HTMLImageElement).parentElement?.querySelector('.fallback-icon')?.classList.remove('hidden');
+                            }}
+                          />
+                        ) : null}
+                        <div className={`fallback-icon ${product.imageUrl && product.imageUrl.trim() !== '' ? 'hidden' : ''} text-gray-300`}>
+                          <ImageIcon className="w-5 h-5" />
+                        </div>
                       </div>
                       <span className="text-sm font-bold text-[#202124]">{product.name}</span>
                     </div>

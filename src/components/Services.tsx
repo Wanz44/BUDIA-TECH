@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { Globe, Smartphone, Monitor, Camera, Code, Layout, ArrowUpRight } from 'lucide-react';
 
-const Services = () => {
+const Services = ({ searchTerm = '' }: { searchTerm?: string }) => {
   const services = [
     {
       icon: <Globe className="w-8 h-8 text-accent-blue" />,
@@ -12,7 +12,7 @@ const Services = () => {
     {
       icon: <Smartphone className="w-8 h-8 text-accent-emerald" />,
       title: "Écosystème Mobile",
-      description: "Expériences natives d'exception pour iOS et Android, centrées sur l'utilisateur.",
+      description: "Expériences natives d'exception pour iOS et Android, centrées on l'utilisateur.",
       tags: ["Native", "Performance"]
     },
     {
@@ -41,6 +41,12 @@ const Services = () => {
     }
   ];
 
+  const filteredServices = services.filter(service => 
+    service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    service.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   return (
     <section id="services" className="py-24 bg-surface text-on-surface relative overflow-hidden transition-colors duration-200">
       <div className="container mx-auto px-6 relative z-10">
@@ -54,35 +60,41 @@ const Services = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="group md3-card p-10 hover:bg-white transition-all duration-300 flex flex-col h-full hover:border-primary/20"
-            >
-              <div className="mb-8 p-6 rounded-3xl bg-secondary w-fit group-hover:bg-primary/5 group-hover:scale-110 transition-all duration-500">
-                <div className="text-primary">
-                  {service.icon}
+        {filteredServices.length > 0 ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredServices.map((service, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="group md3-card p-10 hover:bg-white transition-all duration-300 flex flex-col h-full hover:border-primary/20"
+              >
+                <div className="mb-8 p-6 rounded-3xl bg-secondary w-fit group-hover:bg-primary/5 group-hover:scale-110 transition-all duration-500">
+                  <div className="text-primary">
+                    {service.icon}
+                  </div>
                 </div>
-              </div>
-              <h4 className="text-xl font-bold mb-4 tracking-tight group-hover:text-primary transition-colors">{service.title}</h4>
-              <p className="text-text-dim text-sm leading-relaxed mb-10 flex-grow">
-                {service.description}
-              </p>
-              <div className="flex flex-wrap gap-2 pt-6 border-t border-border/40">
-                {service.tags.map((tag, tIndex) => (
-                  <span key={tIndex} className="chip">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                <h4 className="text-xl font-bold mb-4 tracking-tight group-hover:text-primary transition-colors">{service.title}</h4>
+                <p className="text-text-dim text-sm leading-relaxed mb-10 flex-grow">
+                  {service.description}
+                </p>
+                <div className="flex flex-wrap gap-2 pt-6 border-t border-border/40">
+                  {service.tags.map((tag, tIndex) => (
+                    <span key={tIndex} className="chip">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 bg-surface-container/50 rounded-[3rem] border border-dashed border-border">
+            <p className="text-xl font-medium text-text-dim italic">Aucun service ne correspond à votre recherche "{searchTerm}"</p>
+          </div>
+        )}
       </div>
     </section>
   );

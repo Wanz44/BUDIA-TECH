@@ -3,47 +3,42 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import Home from './pages/Home';
 import Portal from './pages/Portal';
-import { mockDb } from '@/lib/mockDb';
+import { supabase } from '@/lib/supabase';
 
 export default function App() {
-  const [siteBg, setSiteBg] = useState<any>({ siteBgType: 'grid', customBgUrl: '' });
+  const [siteBg, setSiteBg] = useState<any>({ siteBgType: 'grid', customBgUrl: '', companyName: 'BUDIA TECH', description: 'Elite High-Tech Solutions' });
 
   useEffect(() => {
-    // Database initialization
-    mockDb.seed('notifications', [
-      { id: '1', title: 'Système BUDIA opérationnel', message: 'Bienvenue dans votre nouvel espace de gestion digital.', type: 'info', read: false, createdAt: new Date().toISOString() },
-      { id: '2', title: 'Mise à jour graphique', message: 'Le dashboard supporte désormais les graphiques interactifs.', type: 'success', read: false, createdAt: new Date().toISOString() },
-    ]);
+    const fetchBgConfig = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_config')
+          .select('*')
+          .eq('id', 'branding')
+          .single();
 
-    mockDb.seed('orders', [
-      { id: '#ORD-9901', customer: 'Elite Corp', total: '15.500', status: 'delivered', createdAt: new Date().toISOString() },
-      { id: '#ORD-9902', customer: 'Tech Haven', total: '8.200', status: 'processing', createdAt: new Date().toISOString() },
-    ]);
-
-    mockDb.seed('siteConfig', [
-      {
-        id: 'branding',
-        logoUrl: '',
-        heroBgUrl: '',
-        siteBgType: 'grid', // grid, solid, custom
-        customBgUrl: '',
-        companyName: 'BUDIA TECH',
-        description: 'Elite High-Tech Solutions'
+        if (data) {
+          setSiteBg({
+            siteBgType: data.site_bg_type,
+            customBgUrl: data.custom_bg_url,
+            companyName: data.company_name,
+            description: data.description
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching site config:', error);
       }
-    ]);
+    };
+
+    fetchBgConfig();
+    window.addEventListener('siteConfigUpdated', fetchBgConfig);
 
     const root = window.document.documentElement;
     root.classList.remove('dark');
     root.classList.add('light');
     localStorage.setItem('theme', 'light');
 
-    const updateBgConfig = () => {
-      const saved = mockDb.getAll('siteConfig').find((c: any) => c.id === 'branding');
-      if (saved) setSiteBg(saved);
-    };
-    updateBgConfig();
-    window.addEventListener('siteConfigUpdated', updateBgConfig);
-    return () => window.removeEventListener('siteConfigUpdated', updateBgConfig);
+    return () => window.removeEventListener('siteConfigUpdated', fetchBgConfig);
   }, []);
 
   const bgStyles = () => {

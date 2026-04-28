@@ -28,7 +28,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { mockDb } from '@/lib/mockDb';
+import { supabase } from '@/lib/supabase';
 import { Order } from '@/types';
 import { toast } from 'sonner';
 import { format, parseISO } from 'date-fns';
@@ -40,25 +40,47 @@ const Orders = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Initial load
-    const data = mockDb.getAll('orders');
-    if (data.length === 0) {
-      // Seed with some initial data if empty
-      const initialOrders = [
-        { id: 'ORD-001', customerName: 'Jean Dupont', customerEmail: 'jean@dupont.com', totalAmount: 3500000, status: 'delivered', createdAt: new Date(Date.now() - 7200000).toISOString() },
-        { id: 'ORD-002', customerName: 'Marie Curie', customerEmail: 'marie@curie.fr', totalAmount: 1200000, status: 'processing', createdAt: new Date(Date.now() - 18000000).toISOString() }
-      ];
-      mockDb.collection('orders').set(initialOrders);
-      setOrders(initialOrders);
-    } else {
-      setOrders(data);
-    }
-    setLoading(false);
+    fetchOrders();
   }, []);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      const mappedOrders: Order[] = (data || []).map(o => ({
+        id: o.id,
+        customerName: o.customer_name,
+        customerEmail: o.customer_email,
+        totalAmount: Number(o.total_amount),
+        status: o.status,
+        createdAt: o.created_at,
+        productIds: [] // Supposons que c'est une relation ou JSON, mais on simplifie ici
+      }));
+      
+      setOrders(mappedOrders);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      toast.error('Erreur de chargement des commandes');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const updateOrderStatus = async (id: string, status: Order['status']) => {
     try {
-      mockDb.update('orders', id, { status });
+      const { error } = await supabase
+        .from('orders')
+        .update({ status })
+        .eq('id', id);
+
+      if (error) throw error;
+      
       setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
       toast.success(`Statut mis à jour: ${status}`);
     } catch (error) {

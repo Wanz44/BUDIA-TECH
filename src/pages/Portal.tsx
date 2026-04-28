@@ -20,7 +20,7 @@ import Dashboard from '@/components/Portal/Dashboard';
 import Inventory from '@/components/Portal/Inventory';
 import Orders from '@/components/Portal/Orders';
 import SettingsView from '@/components/Portal/Settings';
-import { mockDb } from '@/lib/mockDb';
+import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'motion/react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -31,8 +31,19 @@ const Portal = () => {
   const [notifications, setNotifications] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchNotifs = () => {
-      setNotifications(mockDb.getAll('notifications'));
+    const fetchNotifs = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('notifications')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (data) {
+          setNotifications(data);
+        }
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
     };
     fetchNotifs();
     const interval = setInterval(fetchNotifs, 60000);
@@ -41,10 +52,19 @@ const Portal = () => {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const markAllRead = () => {
-    const updated = notifications.map(n => ({ ...n, read: true }));
-    mockDb.set('notifications', updated);
-    setNotifications(updated);
+  const markAllRead = async () => {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('read', false);
+
+      if (error) throw error;
+      
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    } catch (error) {
+      console.error('Error marking all as read:', error);
+    }
   };
 
   const menuItems = [

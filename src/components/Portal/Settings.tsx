@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { mockDb } from '@/lib/mockDb';
+import { supabase } from '@/lib/supabase';
 
 const Settings = () => {
   const [config, setConfig] = useState<any>({
@@ -28,21 +28,56 @@ const Settings = () => {
   });
 
   useEffect(() => {
-    const savedConfig = mockDb.getAll('siteConfig').find((c: any) => c.id === 'branding');
-    if (savedConfig) {
-      setConfig(savedConfig);
-    }
+    const fetchConfig = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_config')
+          .select('*')
+          .eq('id', 'branding')
+          .single();
+
+        if (error) {
+          if (error.code !== 'PGRST116') throw error; // PGRST116 is "no rows found"
+        }
+
+        if (data) {
+          setConfig({
+            companyName: data.company_name,
+            logoUrl: data.logo_url,
+            heroBgUrl: data.hero_bg_url,
+            siteBgType: data.site_bg_type,
+            customBgUrl: data.custom_bg_url,
+            description: data.description
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching config:', error);
+      }
+    };
+    fetchConfig();
   }, []);
 
-  const handleSave = () => {
-    const allConfig = mockDb.getAll('siteConfig');
-    const index = allConfig.findIndex((c: any) => c.id === 'branding');
-    if (index !== -1) {
-      allConfig[index] = config;
-      mockDb.set('siteConfig', allConfig);
+  const handleSave = async () => {
+    try {
+      const { error } = await supabase
+        .from('site_config')
+        .upsert({
+          id: 'branding',
+          company_name: config.companyName,
+          logo_url: config.logoUrl,
+          hero_bg_url: config.heroBgUrl,
+          site_bg_type: config.siteBgType,
+          custom_bg_url: config.customBgUrl,
+          description: config.description
+        });
+
+      if (error) throw error;
+      
       toast.success('Configuration visuelle mise à jour');
-      // Dispatch a custom event to notify other components to refresh
       window.dispatchEvent(new Event('siteConfigUpdated'));
+    } catch (error) {
+      console.error('Error saving config:', error);
+      toast.error('Erreur lors de la sauvegarde');
     }
   };
 

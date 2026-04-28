@@ -3,7 +3,7 @@ import { ShoppingCart, Eye, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-const Products = () => {
+const Products = ({ searchTerm = '' }: { searchTerm?: string }) => {
   const products = [
     {
       id: '1',
@@ -55,6 +55,11 @@ const Products = () => {
     }
   ];
 
+  const filteredProducts = products.filter(product => 
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <section id="products" className="py-24 bg-surface-container/30 transition-colors duration-200">
       <div className="container mx-auto px-6">
@@ -73,51 +78,57 @@ const Products = () => {
           </Button>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
-          {products.map((product, index) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="group flex flex-col h-full"
-            >
-              <div className="relative mb-8 overflow-hidden bg-white rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-border/50">
-                <div className="absolute top-4 left-4 z-10">
-                  <span className="chip bg-white/90 backdrop-blur-sm shadow-sm border-none py-2 px-4 rounded-2xl">
-                    {product.badge}
-                  </span>
-                </div>
-                
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-110"
-                  referrerPolicy="no-referrer"
-                />
-                
-                <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                   <Button className="btn-primary scale-90 group-hover:scale-100 transition-transform shadow-xl">
-                      Détails
-                   </Button>
-                </div>
-              </div>
-
-              <div className="space-y-2 px-2">
-                <span className="text-xs font-bold text-primary uppercase tracking-widest">{product.category}</span>
-                <h3 className="text-xl font-bold tracking-tight text-on-surface hover:text-primary transition-colors cursor-pointer">{product.name}</h3>
-                <div className="flex items-center justify-between pt-4">
-                  <span className="text-2xl font-bold text-on-surface">{product.price.toLocaleString()} Fc</span>
-                  <div className="flex items-center text-accent-yellow">
-                    <Star className="w-4 h-4 fill-current mr-1" />
-                    <span className="text-sm font-bold text-text-dim">5.0</span>
+        {filteredProducts.length > 0 ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+            {filteredProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="group flex flex-col h-full"
+              >
+                <div className="relative mb-8 overflow-hidden bg-white rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-border/50">
+                  <div className="absolute top-4 left-4 z-10">
+                    <span className="chip bg-white/90 backdrop-blur-sm shadow-sm border-none py-2 px-4 rounded-2xl">
+                      {product.badge}
+                    </span>
+                  </div>
+                  
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-110"
+                    referrerPolicy="no-referrer"
+                  />
+                  
+                  <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                     <Button className="btn-primary scale-90 group-hover:scale-100 transition-transform shadow-xl">
+                        Détails
+                     </Button>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+
+                <div className="space-y-2 px-2">
+                  <span className="text-xs font-bold text-primary uppercase tracking-widest">{product.category}</span>
+                  <h3 className="text-xl font-bold tracking-tight text-on-surface hover:text-primary transition-colors cursor-pointer">{product.name}</h3>
+                  <div className="flex items-center justify-between pt-4">
+                    <span className="text-2xl font-bold text-on-surface">{product.price.toLocaleString()} Fc</span>
+                    <div className="flex items-center text-accent-yellow">
+                      <Star className="w-4 h-4 fill-current mr-1" />
+                      <span className="text-sm font-bold text-text-dim">5.0</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 bg-surface/50 rounded-[3rem] border border-dashed border-border">
+            <p className="text-xl font-medium text-text-dim italic">Aucun produit ne correspond à votre recherche "{searchTerm}"</p>
+          </div>
+        )}
       </div>
     </section>
   );

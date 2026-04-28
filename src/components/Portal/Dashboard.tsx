@@ -23,7 +23,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { mockDb } from '@/lib/mockDb';
+import { supabase } from '@/lib/supabase';
 import { format, subDays, isSameDay, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -33,59 +33,61 @@ const Dashboard = () => {
   const [orders, setOrders] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchData = () => {
-      const allOrders = mockDb.getAll('orders');
-      const allCustomers = mockDb.getAll('contacts'); // Assuming contacts are customers
-      const allInventory = mockDb.getAll('inventory');
-      
-      setOrders(allOrders.slice(0, 4));
+    const fetchData = async () => {
+      try {
+        // Fetch Parallelly
+        const [ordersRes, productsRes, contactsRes] = await Promise.all([
+          supabase.from('orders').select('*'),
+          supabase.from('products').select('*'),
+          supabase.from('contacts').select('*') // Ensure this table exists or fallback
+        ]);
 
-      // Process sales data for the last 7 days
-      const last7Days = Array.from({ length: 7 }, (_, i) => {
-        const date = subDays(new Date(), i);
-        return {
-          date: format(date, 'dd MMM', { locale: fr }),
-          rawDate: date,
-          sales: 0
-        };
-      }).reverse();
+        const allOrders = ordersRes.data || [];
+        const allProducts = productsRes.data || [];
+        const allContacts = contactsRes.data || [];
 
-      allOrders.forEach((order: any) => {
-        const orderDate = parseISO(order.createdAt);
-        const dayMatch = last7Days.find(d => isSameDay(d.rawDate, orderDate));
-        if (dayMatch) {
-          // Parse amount like "2.499 Fc" or 2499
-          let amount = 0;
-          if (typeof order.total === 'string') {
-            amount = parseInt(order.total.replace(/[^\d]/g, '')) || 0;
-          } else {
-            amount = order.total || 0;
+        setOrders(allOrders.slice(0, 4).map(o => ({
+          id: o.id,
+          customer: o.customer_name,
+          total: Number(o.total_amount).toLocaleString(),
+          status: o.status,
+          createdAt: o.created_at
+        })));
+
+        // Process sales data for the last 7 days
+        const last7Days = Array.from({ length: 7 }, (_, i) => {
+          const date = subDays(new Date(), i);
+          return {
+            date: format(date, 'dd MMM', { locale: fr }),
+            rawDate: date,
+            sales: 0
+          };
+        }).reverse();
+
+        allOrders.forEach((order: any) => {
+          const orderDate = parseISO(order.created_at);
+          const dayMatch = last7Days.find(d => isSameDay(d.rawDate, orderDate));
+          if (dayMatch) {
+            dayMatch.sales += Number(order.total_amount) || 0;
           }
-          dayMatch.sales += amount;
-        }
-      });
+        });
 
-      setSalesData(last7Days);
+        setSalesData(last7Days);
 
-      // Update stats
-      const totalSales = allOrders.reduce((acc: number, curr: any) => {
-        let amount = 0;
-        if (typeof curr.total === 'string') {
-          amount = parseInt(curr.total.replace(/[^\d]/g, '')) || 0;
-        } else {
-          amount = curr.total || 0;
-        }
-        return acc + amount;
-      }, 0);
+        // Stats calculation
+        const totalSales = allOrders.reduce((acc, curr) => acc + (Number(curr.total_amount) || 0), 0);
+        const criticalStock = allProducts.filter((p: any) => p.stock <= 5).length;
 
-      const criticalStock = allInventory.filter((item: any) => item.quantity <= 5).length;
+        setStats([
+          { name: 'Ventes Totales', value: `${totalSales.toLocaleString()} Fc`, icon: <TrendingUp className="w-5 h-5" />, trend: '+12.5%', isUp: true },
+          { name: 'Nouveaux Clients', value: allContacts.length.toString(), icon: <Users className="w-5 h-5" />, trend: '+8.2%', isUp: true },
+          { name: 'Commandes', value: allOrders.length.toString(), icon: <ShoppingCart className="w-5 h-5" />, trend: '-2.4%', isUp: false },
+          { name: 'Stock Critique', value: criticalStock.toString(), icon: <Package className="w-5 h-5" />, trend: 'Attention', isUp: false },
+        ]);
 
-      setStats([
-        { name: 'Ventes Totales', value: `${totalSales.toLocaleString()} Fc`, icon: <TrendingUp className="w-5 h-5" />, trend: '+12.5%', isUp: true },
-        { name: 'Nouveaux Clients', value: allCustomers.length.toString(), icon: <Users className="w-5 h-5" />, trend: '+8.2%', isUp: true },
-        { name: 'Commandes', value: allOrders.length.toString(), icon: <ShoppingCart className="w-5 h-5" />, trend: '-2.4%', isUp: false },
-        { name: 'Stock Critique', value: criticalStock.toString(), icon: <Package className="w-5 h-5" />, trend: 'Attention', isUp: false },
-      ]);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
     };
 
     fetchData();

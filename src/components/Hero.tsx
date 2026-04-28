@@ -2,7 +2,7 @@ import { motion } from 'motion/react';
 import { ArrowRight, Cpu, Shield, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
-import { mockDb } from '@/lib/mockDb';
+import { supabase } from '@/lib/supabase';
 
 const Hero = () => {
   const [config, setConfig] = useState<any>({
@@ -12,9 +12,24 @@ const Hero = () => {
   });
 
   useEffect(() => {
-    const fetchConfig = () => {
-      const saved = mockDb.getAll('siteConfig').find((c: any) => c.id === 'branding');
-      if (saved) setConfig(saved);
+    const fetchConfig = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_config')
+          .select('*')
+          .eq('id', 'branding')
+          .single();
+
+        if (data) {
+          setConfig({
+            companyName: data.company_name,
+            description: data.description,
+            heroBgUrl: data.hero_bg_url
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching hero config:', error);
+      }
     };
     fetchConfig();
     window.addEventListener('siteConfigUpdated', fetchConfig);

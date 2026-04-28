@@ -1,22 +1,47 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Cpu, Settings, Sun, Moon, Lock } from 'lucide-react';
+import { Menu, X, Cpu, Search, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { mockDb } from '@/lib/mockDb';
+import { Input } from '@/components/ui/Input';
+import { supabase } from '@/lib/supabase';
 
-const Navbar = () => {
+interface NavbarProps {
+  onSearch?: (term: string) => void;
+}
+
+const Navbar = ({ onSearch }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [config, setConfig] = useState<any>({
     companyName: 'BUDIA TECH',
     logoUrl: ''
   });
 
   useEffect(() => {
-    const fetchConfig = () => {
-      const saved = mockDb.getAll('siteConfig').find((c: any) => c.id === 'branding');
-      if (saved) setConfig(saved);
+    onSearch?.(searchQuery);
+  }, [searchQuery, onSearch]);
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_config')
+          .select('*')
+          .eq('id', 'branding')
+          .single();
+
+        if (data) {
+          setConfig({
+            companyName: data.company_name,
+            logoUrl: data.logo_url
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching navbar config:', error);
+      }
     };
     fetchConfig();
     window.addEventListener('siteConfigUpdated', fetchConfig);
@@ -78,7 +103,26 @@ const Navbar = () => {
               </a>
             ))}
             
-            <div className="flex items-center ml-4 pl-4 border-l border-border transition-colors duration-300">
+            {/* Search Bar */}
+            <div className={`flex items-center ml-4 transition-all duration-500 overflow-hidden ${isSearchOpen ? 'w-64' : 'w-10'}`}>
+              <div className="relative w-full flex items-center">
+                <button 
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                  className="p-2 rounded-full hover:bg-primary/5 text-text-dim hover:text-primary transition-all z-10"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
+                <Input 
+                  type="text"
+                  placeholder="Rechercher..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={`absolute left-0 pl-10 h-10 border-border/40 bg-surface/50 rounded-full focus:ring-primary/20 transition-all duration-500 ${isSearchOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                />
+              </div>
+            </div>
+            
+            <div className="flex items-center ml-2 pl-4 border-l border-border transition-colors duration-300">
               <Link to="/portal" title="Espace Client">
                 <Button className="btn-primary w-11 h-11 p-0 rounded-full shadow-none hover:shadow-md flex items-center justify-center">
                   <Lock className="w-5 h-5" />
@@ -121,7 +165,18 @@ const Navbar = () => {
               </button>
             </div>
             
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 mb-8">
+              <div className="relative px-6 mb-4">
+                <Search className="absolute left-10 top-1/2 -translate-y-1/2 w-5 h-5 text-text-dim" />
+                <Input 
+                  type="text"
+                  placeholder="Rechercher..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 h-14 border-border/40 bg-surface/50 rounded-2xl focus:ring-primary/20 text-lg"
+                />
+              </div>
+
               {navLinks.map((link, i) => (
                 <motion.a
                   initial={{ opacity: 0, x: 20 }}
