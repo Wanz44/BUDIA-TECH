@@ -7,9 +7,17 @@ const Footer = () => {
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-12 gap-16 mb-20">
           <div className="lg:col-span-4">
-            <span className="text-2xl font-bold tracking-tight mb-6 block">
-              BUDIA <span className="text-primary">TECH</span>
-            </span>
+            <Link to="/" className="flex items-center gap-3 mb-6">
+              <img 
+                src="https://lbgwlghiwpamhthdgukw.supabase.co/storage/v1/object/sign/PANIER/logo%2001.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xYjgxM2U3ZC04NmQwLTQ3YTQtYmJiNy1mNWRmODFhYmY0ZTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJQQU5JRVIvbG9nbyAwMS5qcGciLCJpYXQiOjE3NzczNDMxNzcsImV4cCI6MjA5MjcwMzE3N30.zZnA9FZDrcDieaUMmshUXcVbWn68gMMCyBXTTAJLUb4" 
+                alt="Logo" 
+                className="h-10 w-auto object-contain"
+                referrerPolicy="no-referrer"
+              />
+              <span className="text-2xl font-bold tracking-tight">
+                BUDIA <span className="text-primary">TECH</span>
+              </span>
+            </Link>
             <p className="text-text-dim text-sm leading-relaxed mb-8 max-w-sm">
               L'excellence technologique et le prestige numérique au service de votre vision professionnelle. Nous construisons l'infrastructure de demain.
             </p>

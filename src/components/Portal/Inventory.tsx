@@ -38,8 +38,10 @@ import {
 import { supabase } from '@/lib/supabase';
 import { Product } from '@/types';
 import { toast } from 'sonner';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const Inventory = () => {
+  const { formatPrice } = useCurrency();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -62,7 +64,7 @@ const Inventory = () => {
         uploadedUrls = newUrls;
       }
 
-      const updatedProduct = {
+      const updatedProduct: any = {
         name: formData.get('name') as string,
         description: formData.get('description') as string,
         price: Number(formData.get('price')),
@@ -72,10 +74,28 @@ const Inventory = () => {
         images: uploadedUrls
       };
       
-      const { error } = await supabase
+      let { error } = await supabase
         .from('products')
         .update(updatedProduct)
         .eq('id', editingProduct.id);
+
+      // Fallback if images column doesn't exist
+      if (error && (error.message.includes('column "images" of relation "products" does not exist') || error.code === '42703')) {
+        console.warn('Falling back: images column missing during update.');
+        const fallbackProduct = { ...updatedProduct };
+        delete fallbackProduct.images;
+        
+        const retry = await supabase
+          .from('products')
+          .update(fallbackProduct)
+          .eq('id', editingProduct.id);
+          
+        error = retry.error;
+        
+        if (!error) {
+          toast.warning('Mis à jour, mais les images supplémentaires n\'ont pas été enregistrées. Veuillez mettre à jour votre base de données Supabase.');
+        }
+      }
 
       if (error) throw error;
       
@@ -127,7 +147,12 @@ const Inventory = () => {
         .upload(filePath, file);
 
       if (error) {
-        console.error('Error uploading image:', error);
+        console.error('Storage upload error:', error);
+        if (error.message.includes('bucket not found')) {
+          toast.error("Le 'bucket' nommé 'products' n'existe pas dans votre compte Supabase Storage. Veuillez le créer avec un accès public.");
+        } else {
+          toast.error(`Erreur d'upload: ${error.message}`);
+        }
         continue;
       }
 
@@ -182,7 +207,7 @@ const Inventory = () => {
         uploadedUrls = await uploadImages(selectedFiles);
       }
 
-      const newProduct = {
+      const newProduct: any = {
         name: formData.get('name') as string,
         description: formData.get('description') as string,
         price: Number(formData.get('price')),
@@ -192,21 +217,43 @@ const Inventory = () => {
         images: uploadedUrls
       };
       
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from('products')
         .insert([newProduct])
         .select();
 
-      if (error) throw error;
+      // Fallback if images column doesn't exist
+      if (error && (error.message.includes('column "images" of relation "products" does not exist') || error.code === '42703')) {
+        console.warn('Falling back: images column missing. Please run the SQL schema update.');
+        const fallbackProduct = { ...newProduct };
+        delete fallbackProduct.images;
+        
+        const retry = await supabase
+          .from('products')
+          .insert([fallbackProduct])
+          .select();
+        
+        data = retry.data;
+        error = retry.error;
+        
+        if (!error) {
+          toast.warning('Produit ajouté, mais les images supplémentaires n\'ont pas été enregistrées. Veuillez mettre à jour votre base de données Supabase avec le nouveau schéma SQL.');
+        }
+      }
+
+      if (error) {
+        console.error('Supabase error detail:', error);
+        throw new Error(error.message || 'Erreur inconnue lors de l\'ajout');
+      }
       
       fetchProducts(); // Refresh list
       toast.success('Produit ajouté avec succès');
       setIsAddDialogOpen(false);
       setSelectedFiles([]);
       setPreviewIndex(0);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding product:', error);
-      toast.error('Erreur lors de l\'ajout du produit');
+      toast.error(`Erreur: ${error.message || 'Vérifiez votre console'}`);
     } finally {
       setSubmitting(false);
     }
@@ -512,7 +559,7 @@ const Inventory = () => {
                   <TableCell>
                     <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md">{product.category}</span>
                   </TableCell>
-                  <TableCell className="text-sm font-bold text-[#202124]">{product.price.toLocaleString()} Fc</TableCell>
+                  <TableCell className="text-sm font-bold text-[#202124]">{formatPrice(product.price)}</TableCell>
                   <TableCell className="text-xs font-semibold text-gray-500">{product.stock} pcs</TableCell>
                   <TableCell>
                     {product.stock > 10 ? (

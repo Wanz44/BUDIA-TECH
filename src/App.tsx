@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Portal from './pages/Portal';
 import ProductDetail from './pages/ProductDetail';
 import { supabase } from '@/lib/supabase';
+import { CurrencyProvider } from './context/CurrencyContext';
 
 export default function App() {
   const [siteBg, setSiteBg] = useState<any>({ siteBgType: 'grid', customBgUrl: '', companyName: 'BUDIA TECH', description: 'Elite High-Tech Solutions' });
@@ -55,15 +56,17 @@ export default function App() {
   };
 
   return (
-    <div style={bgStyles()} className={`min-h-screen transition-colors duration-700 ${siteBg.siteBgType === 'grid' ? 'bg-grid' : ''}`}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/portal/*" element={<Portal />} />
-        </Routes>
-        <Toaster position="top-right" />
-      </Router>
-    </div>
+    <CurrencyProvider>
+      <div style={bgStyles()} className={`min-h-screen transition-colors duration-700 ${siteBg.siteBgType === 'grid' ? 'bg-grid' : ''}`}>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/portal/*" element={<Portal />} />
+          </Routes>
+          <Toaster position="top-right" />
+        </Router>
+      </div>
+    </CurrencyProvider>
   );
 }

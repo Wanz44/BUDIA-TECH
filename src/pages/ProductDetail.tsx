@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +26,10 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
+
+  const formatPriceFC = (price: number) => {
+    return new Intl.NumberFormat('fr-FR').format(price) + ' Fc';
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -167,8 +172,7 @@ const ProductDetail = () => {
               <div className="flex items-baseline gap-2">
                 <span className="text-[10px] font-bold text-gray-500 uppercase mt-0.5">PRIX ÉLITE</span>
                 <span className="text-4xl font-black text-[#0067c0] tracking-tighter">
-                  {product.price.toLocaleString()}
-                  <span className="text-lg ml-1">Fc</span>
+                  {formatPriceFC(product.price)}
                 </span>
               </div>
 

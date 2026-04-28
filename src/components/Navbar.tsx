@@ -1,23 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Cpu, Search, Lock } from 'lucide-react';
+import { Menu, X, Cpu, Search, Lock, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/Input';
 import { supabase } from '@/lib/supabase';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface NavbarProps {
   onSearch?: (term: string) => void;
 }
 
 const Navbar = ({ onSearch }: NavbarProps) => {
+  const { currency, setCurrency } = useCurrency();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [config, setConfig] = useState<any>({
     companyName: 'BUDIA TECH',
-    logoUrl: ''
+    logoUrl: 'https://lbgwlghiwpamhthdgukw.supabase.co/storage/v1/object/sign/PANIER/logo%2001.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xYjgxM2U3ZC04NmQwLTQ3YTQtYmJiNy1mNWRmODFhYmY0ZTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJQQU5JRVIvbG9nbyAwMS5qcGciLCJpYXQiOjE3NzczNDMxNzcsImV4cCI6MjA5MjcwMzE3N30.zZnA9FZDrcDieaUMmshUXcVbWn68gMMCyBXTTAJLUb4'
   });
 
   useEffect(() => {
@@ -80,7 +82,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         <div className="flex justify-between items-center bg-surface/40 lg:bg-transparent rounded-full px-4 lg:px-0 py-2 lg:py-0">
           <Link to="/" className="group flex items-center gap-3">
             {config.logoUrl ? (
-              <img src={config.logoUrl} alt="Logo" className="h-8 w-auto object-contain" referrerPolicy="no-referrer" />
+              <img src={config.logoUrl} alt="Logo" className="h-20 w-auto object-contain" referrerPolicy="no-referrer" />
             ) : (
               <div className="bg-primary p-2 rounded-xl text-white hidden sm:flex items-center justify-center shadow-sm">
                 <Cpu className="w-5 h-5" />

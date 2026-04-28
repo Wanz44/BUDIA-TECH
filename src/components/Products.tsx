@@ -6,10 +6,15 @@ import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Product } from '@/types';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const Products = ({ searchTerm = '' }: { searchTerm?: string }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const formatPriceFC = (price: number) => {
+    return new Intl.NumberFormat('fr-FR').format(price) + ' Fc';
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -108,7 +113,7 @@ const Products = ({ searchTerm = '' }: { searchTerm?: string }) => {
                     <span className="text-xs font-bold text-primary uppercase tracking-widest">{product.category}</span>
                     <h3 className="text-xl font-bold tracking-tight text-on-surface hover:text-primary transition-colors">{product.name}</h3>
                     <div className="flex items-center justify-between pt-4">
-                      <span className="text-2xl font-bold text-on-surface">{product.price.toLocaleString()} Fc</span>
+                      <span className="text-2xl font-bold text-on-surface">{formatPriceFC(product.price)}</span>
                       <div className="flex items-center text-accent-yellow">
                         <Star className="w-4 h-4 fill-current mr-1" />
                         <span className="text-sm font-bold text-text-dim">5.0</span>

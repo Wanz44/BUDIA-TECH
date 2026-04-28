@@ -25,7 +25,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
+import { useCurrency } from '@/context/CurrencyContext';
+
 const Portal = () => {
+  const { currency, setCurrency } = useCurrency();
   const location = useLocation();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -86,20 +89,43 @@ const Portal = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#f3f3f3] font-sans selection:bg-[#0067c0]/20">
       {/* Windows 11 Acrylic Header */}
-      <header className="h-14 acrylic sticky top-0 flex items-center justify-between px-6 shrink-0 z-40">
+      <header className="h-16 acrylic sticky top-0 flex items-center justify-between px-6 shrink-0 z-40">
         <div className="flex items-center space-x-4">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-[#0067c0] rounded-sm flex items-center justify-center p-1 shadow-sm">
-              <Cpu className="w-full h-full text-white" />
+          <Link to="/" className="flex items-center space-x-3">
+            <div className="h-20 flex items-center">
+              <img 
+                src="https://lbgwlghiwpamhthdgukw.supabase.co/storage/v1/object/sign/PANIER/logo%2001.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xYjgxM2U3ZC04NmQwLTQ3YTQtYmJiNy1mNWRmODFhYmY0ZTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJQQU5JRVIvbG9nbyAwMS5qcGciLCJpYXQiOjE3NzczNDMxNzcsImV4cCI6MjA5MjcwMzE3N30.zZnA9FZDrcDieaUMmshUXcVbWn68gMMCyBXTTAJLUb4" 
+                alt="Logo" 
+                className="h-full w-auto object-contain"
+                referrerPolicy="no-referrer"
+              />
             </div>
-            <span className="text-xs font-semibold text-[#202124]">BUDIA PRO</span>
+            <div className="flex flex-col">
+              <span className="text-[11px] font-black text-[#202124] leading-tight uppercase tracking-tighter">BUDIA TECH</span>
+              <span className="text-[9px] font-bold text-primary leading-tight uppercase tracking-widest">PRO ADMIN</span>
+            </div>
           </Link>
           <div className="h-4 w-[1px] bg-gray-300" />
-          <span className="text-xs text-gray-500 font-medium">Portail de Gestion Urbaine</span>
+          <span className="text-xs text-gray-500 font-medium hidden sm:block">Gestion d'Entreprise</span>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <div className="relative hidden md:block w-64">
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-1 bg-white/50 rounded-md border border-gray-200 p-0.5">
+            <button 
+              onClick={() => setCurrency('FC')}
+              className={`px-3 py-1 rounded text-[10px] font-bold transition-all ${currency === 'FC' ? 'bg-[#0067c0] text-white shadow-sm' : 'text-gray-500 hover:bg-black/5'}`}
+            >
+              FC
+            </button>
+            <button 
+              onClick={() => setCurrency('USD')}
+              className={`px-3 py-1 rounded text-[10px] font-bold transition-all ${currency === 'USD' ? 'bg-[#0067c0] text-white shadow-sm' : 'text-gray-500 hover:bg-black/5'}`}
+            >
+              $
+            </button>
+          </div>
+
+          <div className="relative hidden md:block w-48">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
             <Input
               placeholder="Rechercher..."
